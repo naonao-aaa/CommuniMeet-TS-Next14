@@ -1,6 +1,7 @@
 import React from "react";
 
 import "@/assets/styles/globals.css";
+import Navbar from "@/components/Navbar";
 
 export const metadata = {
   title: "CommuniMeeting",
@@ -17,7 +18,8 @@ const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
     <html lang="ja">
       <body>
-        <div>{children}</div>
+        <Navbar />
+        <main>{children}</main>
       </body>
     </html>
   );
