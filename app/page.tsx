@@ -1,11 +1,13 @@
+import Link from "next/link";
 import React from "react";
 
-// export const metadata = {
-//   title: "Test",
-// };
-
 const HomePage: React.FC = () => {
-  return <div>HomePage</div>;
+  return (
+    <div>
+      <h1 className="text-3xl">Welcome</h1>
+      <Link href="/events">Show Events</Link>
+    </div>
+  );
 };
 
 export default HomePage;
