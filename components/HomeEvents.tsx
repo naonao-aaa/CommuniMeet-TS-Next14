@@ -1,9 +1,11 @@
 import Link from "next/link";
 import EventCard from "@/components/EventCard";
-import events from "@/events.json";
+import { fetchEvents } from "@/utils/requests";
 import { Event } from "@/types/event"; // Event 型定義のインポート
 
-const HomeEvents: React.FC = () => {
+const HomeEvents: React.FC = async () => {
+  const events = await fetchEvents(); // eventデータを取得
+
   // イベントをランダムに3つ選択(訪問するたびに異なるイベントが表示されるように。)
   const recentEvents: Event[] = events
     .sort(() => Math.random() - Math.random())
