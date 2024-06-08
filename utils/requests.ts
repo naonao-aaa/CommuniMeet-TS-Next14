@@ -25,5 +25,28 @@ async function fetchEvents(): Promise<Event[]> {
   }
 }
 
-// fetchEvents関数をエクスポート
-export { fetchEvents };
+// 単一のEventを取得するための関数
+async function fetchEvent(id: string): Promise<Event | null> {
+  try {
+    // APIドメインが未設定の場合は、空の配列を返してreturnして処理を終わる。
+    if (!apiDomain) {
+      return null;
+    }
+
+    // 指定されたIDを持つイベントの詳細情報を取得するためのリクエストを実行。
+    const res = await fetch(`${apiDomain}/events/${id}`);
+
+    // レスポンスが正常でない場合はエラーを投げる。
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    return res.json(); // レスポンスのJSONを解析して返す。
+  } catch (error) {
+    console.log(error);
+    return null;
+  }
+}
+
+// エクスポート
+export { fetchEvents, fetchEvent };
