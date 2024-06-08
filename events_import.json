@@ -1,0 +1,352 @@
+[
+  {
+    "owner": "1",
+    "name": "富士山ハイキングツアー",
+    "type": "アウトドア",
+    "description": "富士山の自然を満喫する一日ハイキングツアー。初心者から経験者まで楽しめます。",
+    "location": {
+      "venue": "富士山",
+      "street": "",
+      "city": "山梨県",
+      "state": "山梨",
+      "zipcode": "407-0000"
+    },
+    "date_time": {
+      "start": "2024-06-01T08:00:00.000Z",
+      "end": "2024-06-01T19:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 10,
+      "max": 100
+    },
+    "ticket_info": {
+      "price": 3000,
+      "availability": true
+    },
+    "conditions": ["年齢不問", "初心者歓迎"],
+    "responsible_info": {
+      "name": "山田太郎",
+      "email": "yamada@gmail.com",
+      "phone": "090-1234-5678"
+    },
+    "images": ["fuji1.jpeg", "fuji2.jpeg"],
+    "is_featured": false,
+    "createdAt": "2024-01-20T00:00:00.000Z",
+    "updatedAt": "2024-01-20T00:00:00.000Z"
+  },
+  {
+    "owner": "2",
+    "name": "渋谷ランチ・グルメフェスティバル",
+    "type": "ランチ",
+    "description": "渋谷の人気レストランが一堂に会するグルメイベント。各店舗の特製ランチを楽しめます。",
+    "location": {
+      "venue": "渋谷公園",
+      "street": "宇田川町",
+      "city": "東京",
+      "state": "東京都",
+      "zipcode": "150-0042"
+    },
+    "date_time": {
+      "start": "2024-07-20T11:00:00.000Z",
+      "end": "2024-07-20T15:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 0,
+      "max": 500
+    },
+    "ticket_info": {
+      "price": 0,
+      "availability": true
+    },
+    "conditions": ["20代歓迎", "学生歓迎"],
+    "responsible_info": {
+      "name": "佐藤花子",
+      "email": "sato.hanako@example.com",
+      "phone": "090-8765-4321"
+    },
+    "images": ["lunch1.jpeg", "lunch2.jpeg"],
+    "is_featured": true,
+    "createdAt": "2024-02-15T00:00:00.000Z",
+    "updatedAt": "2024-02-15T00:00:00.000Z"
+  },
+  {
+    "owner": "3",
+    "name": "恵比寿街コンナイト",
+    "type": "街コン",
+    "description": "恵比寿のおしゃれなバーで開催される大人の街コン。素敵な出会いを楽しみにお越しください。",
+    "location": {
+      "venue": "エビスバー",
+      "street": "恵比寿南",
+      "city": "東京",
+      "state": "東京都",
+      "zipcode": "150-0022"
+    },
+    "date_time": {
+      "start": "2024-08-15T19:00:00.000Z",
+      "end": "2024-08-15T23:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 20,
+      "max": 200
+    },
+    "ticket_info": {
+      "price": 5000,
+      "availability": true
+    },
+    "conditions": ["20代歓迎", "初心者歓迎"],
+    "responsible_info": {
+      "name": "鈴木一郎",
+      "email": "suzuki.ichiro@example.com",
+      "phone": "080-1122-3344"
+    },
+    "images": ["machikon1.jpeg", "machikon2.jpeg"],
+    "is_featured": true,
+    "createdAt": "2024-02-28T00:00:00.000Z",
+    "updatedAt": "2024-02-28T00:00:00.000Z"
+  },
+  {
+    "owner": "4",
+    "name": "アニメエキスポに一緒に行きませんか？",
+    "type": "オタ活",
+    "description": "アニメファン必見の展示会。最新のアニメグッズや特別ゲストのトークショーをお楽しみいただけます。",
+    "location": {
+      "venue": "東京ビッグサイト",
+      "street": "有明",
+      "city": "東京",
+      "state": "東京都",
+      "zipcode": "135-0063"
+    },
+    "date_time": {
+      "start": "2024-09-10T10:00:00.000Z",
+      "end": "2024-09-10T18:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 2,
+      "max": 8
+    },
+    "ticket_info": {
+      "price": 2000,
+      "availability": true
+    },
+    "conditions": ["コスプレ参加者歓迎", "初心者歓迎"],
+    "responsible_info": {
+      "name": "伊藤莉子",
+      "email": "ito.riko@example.com",
+      "phone": "070-5566-7788"
+    },
+    "images": ["anime1.jpeg", "anime2.jpeg"],
+    "is_featured": false,
+    "createdAt": "2024-03-10T00:00:00.000Z",
+    "updatedAt": "2024-03-10T00:00:00.000Z"
+  },
+  {
+    "owner": "5",
+    "name": "ディズニーランド・ハロウィンスペシャルに一緒に行きませんか？",
+    "type": "テーマパーク",
+    "description": "ハロウィンをテーマにしたディズニーランドの特別イベント。限定アトラクションとショーが楽しめます。",
+    "location": {
+      "venue": "東京ディズニーランド",
+      "street": "舞浜",
+      "city": "千葉",
+      "state": "千葉県",
+      "zipcode": "279-0031"
+    },
+    "date_time": {
+      "start": "2024-10-31T09:00:00.000Z",
+      "end": "2024-10-31T22:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 2,
+      "max": 8
+    },
+    "ticket_info": {
+      "price": 7400,
+      "availability": true
+    },
+    "conditions": ["20代歓迎", "学生歓迎"],
+    "responsible_info": {
+      "name": "高橋健太",
+      "email": "takahashi.kenta@example.com",
+      "phone": "090-9911-2211"
+    },
+    "images": ["disney1.jpeg", "disney2.jpeg"],
+    "is_featured": true,
+    "createdAt": "2024-04-01T00:00:00.000Z",
+    "updatedAt": "2024-04-01T00:00:00.000Z"
+  },
+  {
+    "owner": "6",
+    "name": "東京マラソン2024",
+    "type": "スポーツ",
+    "description": "東京の街を駆け抜ける国際マラソンイベント。プロからアマチュアまで幅広く参加できます。",
+    "location": {
+      "venue": "東京駅",
+      "street": "丸の内",
+      "city": "東京",
+      "state": "東京都",
+      "zipcode": "100-0005"
+    },
+    "date_time": {
+      "start": "2024-03-03T07:00:00.000Z",
+      "end": "2024-03-03T15:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 0,
+      "max": 30000
+    },
+    "ticket_info": {
+      "price": 15000,
+      "availability": true
+    },
+    "conditions": ["経験者優遇", "年齢不問", "健康証明書が必要"],
+    "responsible_info": {
+      "name": "田中真紀",
+      "email": "tanaka.maki@example.com",
+      "phone": "080-6677-8899"
+    },
+    "images": ["marathon1.jpeg", "marathon2.jpeg"],
+    "is_featured": false,
+    "createdAt": "2024-01-01T00:00:00.000Z",
+    "updatedAt": "2024-01-01T00:00:00.000Z"
+  },
+  {
+    "owner": "7",
+    "name": "北海道スノーフェスティバルに一緒に行きませんか？",
+    "type": "その他",
+    "description": "冬の魅力がいっぱいのスノーフェスティバル。雪像コンテスト、スノーボード、スキーが楽しめます。",
+    "location": {
+      "venue": "大通公園",
+      "street": "大通西",
+      "city": "札幌",
+      "state": "北海道",
+      "zipcode": "060-0042"
+    },
+    "date_time": {
+      "start": "2024-02-05T10:00:00.000Z",
+      "end": "2024-02-05T22:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 4,
+      "max": 10
+    },
+    "ticket_info": {
+      "price": 0,
+      "availability": true
+    },
+    "conditions": ["初心者歓迎", "インターナショナル参加者歓迎"],
+    "responsible_info": {
+      "name": "中村優子",
+      "email": "nakamura.yuko@example.com",
+      "phone": "070-5567-1122"
+    },
+    "images": ["snow1.jpeg", "snow2.jpeg"],
+    "is_featured": true,
+    "createdAt": "2024-05-01T00:00:00.000Z",
+    "updatedAt": "2024-05-01T00:00:00.000Z"
+  },
+  {
+    "owner": "8",
+    "name": "ナイトサファリ・フォトツアー",
+    "type": "アウトドア",
+    "description": "夜の動物園を専門ガイドと一緒に探検し、夜行性の動物たちを写真に収めるツアー。",
+    "location": {
+      "venue": "横浜動物園ズーラシア",
+      "street": "旭区上白根町",
+      "city": "横浜",
+      "state": "神奈川県",
+      "zipcode": "241-0001"
+    },
+    "date_time": {
+      "start": "2024-08-15T19:00:00.000Z",
+      "end": "2024-08-15T23:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 5,
+      "max": 20
+    },
+    "ticket_info": {
+      "price": 5000,
+      "availability": true
+    },
+    "conditions": ["学生歓迎", "年齢不問", "初心者歓迎"],
+    "responsible_info": {
+      "name": "小林歩",
+      "email": "kobayashi.ayumu@example.com",
+      "phone": "080-1133-4455"
+    },
+    "images": ["safari1.jpeg", "safari2.jpeg"],
+    "is_featured": true,
+    "createdAt": "2024-05-20T00:00:00.000Z",
+    "updatedAt": "2024-05-20T00:00:00.000Z"
+  },
+  {
+    "owner": "9",
+    "name": "大阪ストリートフードフェスティバル",
+    "type": "ランチ",
+    "description": "大阪の人気ストリートフードを一堂に集めたフェスティバル。タコヤキ、お好み焼き、串カツなどが楽しめます。",
+    "location": {
+      "venue": "心斎橋",
+      "street": "心斎橋筋",
+      "city": "大阪",
+      "state": "大阪府",
+      "zipcode": "542-0085"
+    },
+    "date_time": {
+      "start": "2024-09-10T11:00:00.000Z",
+      "end": "2024-09-10T21:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 0,
+      "max": 1000
+    },
+    "ticket_info": {
+      "price": 0,
+      "availability": true
+    },
+    "conditions": ["ペット同伴可", "初心者歓迎", "SNSアカウント保持者歓迎"],
+    "responsible_info": {
+      "name": "渡辺秀樹",
+      "email": "watanabe.hideki@example.com",
+      "phone": "090-7788-9966"
+    },
+    "images": ["osaka1.jpeg", "osaka2.jpeg"],
+    "is_featured": false,
+    "createdAt": "2024-03-25T00:00:00.000Z",
+    "updatedAt": "2024-03-25T00:00:00.000Z"
+  },
+  {
+    "owner": "10",
+    "name": "東京テックサミット",
+    "type": "その他",
+    "description": "最新技術とイノベーションをテーマにした大規模な技術会議。国内外の専門家が集まり、知識の共有とネットワーキングを行います。",
+    "location": {
+      "venue": "東京国際フォーラム",
+      "street": "丸の内",
+      "city": "東京",
+      "state": "東京都",
+      "zipcode": "100-0005"
+    },
+    "date_time": {
+      "start": "2024-11-20T09:00:00.000Z",
+      "end": "2024-11-20T18:00:00.000Z"
+    },
+    "attendee_limits": {
+      "min": 100,
+      "max": 5000
+    },
+    "ticket_info": {
+      "price": 20000,
+      "availability": true
+    },
+    "conditions": ["インターナショナル参加者歓迎", "経験者優遇", "初心者歓迎"],
+    "responsible_info": {
+      "name": "吉田沙保里",
+      "email": "yoshida.sayuri@example.com",
+      "phone": "090-8822-3344"
+    },
+    "images": ["tech1.jpeg", "tech2.jpeg"],
+    "is_featured": true,
+    "createdAt": "2024-04-10T00:00:00.000Z",
+    "updatedAt": "2024-04-10T00:00:00.000Z"
+  }
+]
