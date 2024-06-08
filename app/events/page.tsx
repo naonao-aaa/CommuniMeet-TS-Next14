@@ -1,23 +1,5 @@
 import EventCard from "@/components/EventCard";
-import { Event } from "@/types/event"; // Event 型定義のインポート
-
-// eventデータをAPIから非同期に取得する関数
-async function fetchEvents(): Promise<Event[]> {
-  try {
-    const res = await fetch(`${process.env.NEXT_PUBLIC_API_DOMAIN}/events`, {
-      cache: "no-store",
-    });
-
-    if (!res.ok) {
-      throw new Error("Failed to fetch data");
-    }
-
-    return res.json();
-  } catch (error) {
-    console.log(error);
-    return []; // エラーが発生した場合は空の配列を返す
-  }
-}
+import { fetchEvents } from "@/utils/requests";
 
 const EventsPage: React.FC = async () => {
   const events = await fetchEvents(); // eventデータを取得
