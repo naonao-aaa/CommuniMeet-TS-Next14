@@ -1,11 +1,14 @@
 import connectDB from "@/config/database";
+import Event from "@/models/Event";
 
+// GET /api/events
 export const GET = async (request: Request) => {
   try {
     await connectDB(); // connectDB関数を呼び出してデータベースに接続を試みる。
 
-    // データベース接続後、クライアントに対して JSON 形式のレスポンスを送る。
-    return new Response(JSON.stringify({ message: "Hello World" }), {
+    const events = await Event.find({}); //Event モデルを使用して、MongoDB からすべての物件データを取得
+
+    return new Response(JSON.stringify(events), {
       status: 200,
     });
   } catch (error) {
