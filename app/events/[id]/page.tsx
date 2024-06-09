@@ -6,6 +6,7 @@ import { fetchEvent } from "@/utils/requests";
 import { Event } from "@/types/event";
 import EventHeaderImage from "@/components/EventHeaderImage";
 import EventDetails from "@/components/EventDetails";
+import Spinner from "@/components/Spinner";
 import { FaArrowLeft } from "react-icons/fa";
 
 const EventPage: React.FC = () => {
@@ -46,6 +47,8 @@ const EventPage: React.FC = () => {
 
   return (
     <>
+      {loading && <Spinner loading={loading} />}
+
       {!loading &&
         event && ( // ローディングが完了し、プロパティデータがある場合のみ内容を表示
           <>
