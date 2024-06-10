@@ -1,18 +1,42 @@
 "use client";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import { usePathname } from "next/navigation";
 import Image from "next/image";
 import Link from "next/link";
 import logo from "@/assets/images/kouen_park.jpeg";
 import profileDefault from "@/assets/images/profile.png";
 import { FaGoogle } from "react-icons/fa";
+import { signIn, signOut, useSession, getProviders } from "next-auth/react"; // NextAuth.jsの機能をインポート
+
+// 認証プロバイダーの型を定義
+interface Provider {
+  id: string;
+  name: string;
+}
 
 const Navbar: React.FC = () => {
-  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false);
-  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false);
-  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false);
+  const { data: session } = useSession(); // ログインセッションの情報を取得
+
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false); // モバイルメニューの開閉状態
+  const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false); // プロフィールメニューの開閉状態
+  const [providers, setProviders] = useState<Record<string, Provider> | null>(
+    null
+  ); // 認証プロバイダのリストを保持
 
   const pathname = usePathname(); // usePathnameは現在のURLのパス名を返す
+
+  // コンポーネントがマウントされた時に認証プロバイダを取得
+  useEffect(() => {
+    const setAuthProviders = async () => {
+      const res = await getProviders(); // 利用可能な認証プロバイダを取得
+      setProviders(res);
+      // setProviders(res as Record<string, Provider>);
+    };
+
+    setAuthProviders();
+  }, []);
+
+  // console.log(providers);
 
   return (
     <nav className="bg-emerald-700 border-b border-emerald-500">
@@ -75,7 +99,7 @@ const Navbar: React.FC = () => {
                 >
                   Events
                 </Link>
-                {isLoggedIn && ( //ログインしていたら表示させる。
+                {session && ( //ログインしていたら表示させる。
                   <Link
                     href="/events/add"
                     className={`${
@@ -90,19 +114,26 @@ const Navbar: React.FC = () => {
           </div>
 
           {/* <!-- 右側のメニュー（ログアウト） --> */}
-          {!isLoggedIn && ( //ログインしていなかったら表示させる。
+          {!session && ( //ログインしていなかったら表示させる。
             <div className="hidden md:block md:ml-6">
               <div className="flex items-center">
-                <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2">
-                  <FaGoogle className="text-white mr-2" />
-                  <span>Login or Register</span>
-                </button>
+                {providers &&
+                  Object.values(providers).map((provider, index) => (
+                    <button
+                      key={index}
+                      onClick={() => signIn(provider.id)}
+                      className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+                    >
+                      <FaGoogle className="text-white mr-2" />
+                      <span>Login or Register</span>
+                    </button>
+                  ))}
               </div>
             </div>
           )}
 
           {/* <!-- 右側のメニュー（ログイン）--> */}
-          {isLoggedIn && ( //ログインしていたら表示させる。
+          {session && ( //ログインしていたら表示させる。
             <div className="absolute inset-y-0 right-0 flex items-center pr-2 md:static md:inset-auto md:ml-6 md:pr-0">
               <Link href="/messages" className="relative group">
                 <button
@@ -215,7 +246,7 @@ const Navbar: React.FC = () => {
             >
               Events
             </Link>
-            {isLoggedIn && ( //ログインしていたら表示させる。
+            {session && ( //ログインしていたら表示させる。
               <Link
                 href="/events/add"
                 className={`${
@@ -226,11 +257,17 @@ const Navbar: React.FC = () => {
               </Link>
             )}
 
-            {!isLoggedIn && ( //ログインしていなかったら表示させる。
-              <button className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2 my-4">
-                <span>Login or Register</span>
-              </button>
-            )}
+            {!session && //ログインしていなかったら表示させる。
+              providers &&
+              Object.values(providers).map((provider, index) => (
+                <button
+                  key={index}
+                  onClick={() => signIn(provider.id)}
+                  className="flex items-center text-white bg-gray-700 hover:bg-gray-900 hover:text-white rounded-md px-3 py-2"
+                >
+                  <span>Login or Register</span>
+                </button>
+              ))}
           </div>
         </div>
       )}
