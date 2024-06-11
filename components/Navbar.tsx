@@ -16,6 +16,7 @@ interface Provider {
 
 const Navbar: React.FC = () => {
   const { data: session } = useSession(); // ログインセッションの情報を取得
+  const profileImage = session?.user?.image; //Googleアイコン画像情報を取得
 
   const [isMobileMenuOpen, setIsMobileMenuOpen] = useState<boolean>(false); // モバイルメニューの開閉状態
   const [isProfileMenuOpen, setIsProfileMenuOpen] = useState<boolean>(false); // プロフィールメニューの開閉状態
@@ -176,8 +177,10 @@ const Navbar: React.FC = () => {
                     <span className="sr-only">Open user menu</span>
                     <Image
                       className="h-8 w-8 rounded-full"
-                      src={profileDefault}
+                      src={profileImage || profileDefault}
                       alt=""
+                      width={40}
+                      height={40}
                     />
                   </button>
                 </div>
