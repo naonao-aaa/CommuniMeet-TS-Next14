@@ -1,5 +1,6 @@
 import connectDB from "@/config/database";
 import Event from "@/models/Event";
+import { getSessionUser } from "@/utils/getSessionUser"; //セッション情報からユーザー情報を取得する関数をインポート
 
 // GET /api/events
 export const GET = async (request: Request) => {
@@ -22,6 +23,17 @@ export const GET = async (request: Request) => {
 // POSTリクエストを処理してイベント情報をデータベースに追加
 export const POST = async (request: Request) => {
   try {
+    await connectDB(); // データベースに接続
+
+    const sessionUser = await getSessionUser(); // セッションユーザー情報を取得
+
+    // 「セッションユーザーが存在しない場合」または「ユーザーIDが取得できない場合」は、エラーレスポンスを返す
+    if (!sessionUser || !sessionUser.userId) {
+      return new Response("User ID is required", { status: 401 });
+    }
+
+    const { userId } = sessionUser; // ユーザーIDをセッションから取得
+
     const formData = await request.formData(); // リクエストからFormDataを取得
 
     // FormDataからconditionsの全ての値を取得
@@ -62,15 +74,21 @@ export const POST = async (request: Request) => {
         email: formData.get("responsible_info.email"),
         phone: formData.get("responsible_info.phone"),
       },
+      owner: userId,
       // images,
     };
 
-    console.log(eventData);
+    // console.log(eventData);
+
+    // 新しいイベントを、データベースに保存
+    const newEvent = new Event(eventData);
+    await newEvent.save();
 
     // 成功時のレスポンス
-    return new Response(JSON.stringify({ message: "Success" }), {
-      status: 200,
-    });
+    // イベントが正常に保存された後、そのイベントの詳細ページにリダイレクト
+    return Response.redirect(
+      `${process.env.NEXTAUTH_URL}/events/${newEvent._id}`
+    );
   } catch (error) {
     // エラー時のレスポンス
     console.error("Error during POST /api/events:", error);
