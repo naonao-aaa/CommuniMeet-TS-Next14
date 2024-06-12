@@ -130,7 +130,7 @@ const EventAddForm = () => {
   return (
     // mountedがtrueの場合のみフォームをレンダリング
     mounted && (
-      <form>
+      <form action="/api/events" method="POST" encType="multipart/form-data">
         <h2 className="text-3xl text-center font-semibold mb-6">
           イベント登録
         </h2>
@@ -539,7 +539,7 @@ const EventAddForm = () => {
             <input
               type="text"
               id="owner_name"
-              name="responsible_info.name."
+              name="responsible_info.name"
               className="border rounded w-full py-2 px-3"
               placeholder="Name"
               value={fields.responsible_info.name}
@@ -598,6 +598,7 @@ const EventAddForm = () => {
             accept="image/*"
             multiple
             onChange={handleImageChange}
+            required
           />
         </div>
 
