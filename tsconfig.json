@@ -1,5 +1,6 @@
 {
   "compilerOptions": {
+    "target": "es2015", //TypeScriptコンパイラが、 ES2015(ES6)またはそれ以降の JavaScript機能を理解し、変換することが可能になるように追加。
     "lib": ["dom", "dom.iterable", "esnext"],
     "allowJs": true,
     "skipLibCheck": true,
