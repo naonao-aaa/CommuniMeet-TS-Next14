@@ -297,6 +297,7 @@ const EventAddForm = () => {
               name="attendee_limits.min"
               className="border rounded w-full py-2 px-3"
               required
+              min="0"
               value={fields.attendee_limits.min}
               onChange={handleChange}
             />
@@ -311,6 +312,7 @@ const EventAddForm = () => {
               name="attendee_limits.max"
               className="border rounded w-full py-2 px-3"
               required
+              min="0"
               value={fields.attendee_limits.max}
               onChange={handleChange}
             />
@@ -521,6 +523,7 @@ const EventAddForm = () => {
                 id="price"
                 name="ticket_info.price"
                 className="border rounded w-full py-2 px-3"
+                min="0"
                 value={fields.ticket_info.price}
                 onChange={handleChange}
               />
