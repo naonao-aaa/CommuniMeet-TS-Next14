@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect } from "react";
+import { useState, useEffect, ChangeEvent } from "react";
 import { EventFormFields } from "@/types/eventFormFields";
 
 const EventAddForm = () => {
@@ -41,9 +41,91 @@ const EventAddForm = () => {
     setMounted(true);
   }, []);
 
-  const handleChange = () => {};
-  const handleEventsChange = () => {};
-  const handleImageChange = () => {};
+  // フォームの入力値が変更されたときに呼び出される関数
+  const handleChange = (
+    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement | HTMLSelectElement>
+  ) => {
+    const { name, value } = e.target; // e.target から name（入力フィールドの名前）と value（入力された値）を取得
+
+    // フォームの name 属性がドット（.）を含む場合、ネストされたオブジェクトの更新が必要
+    if (name.includes(".")) {
+      const [outerKey, innerKey] = name.split("."); // name をドットで分割して、外側と内側のキーを取得
+
+      // 現在の fields 状態を取得し、更新する
+      // setFieldsを使用して状態を更新。ここでは、prevFields（更新前の状態）を引数に取る。
+      setFields((prevFields) => {
+        // outerKeyをキーとして使用して、prevFieldsから対応するオブジェクトセクション（例: locationオブジェクト）を取得する。
+        const outerSection = prevFields[outerKey as keyof EventFormFields];
+        // 取得したセクションがオブジェクトであることを確認。
+        if (typeof outerSection === "object" && outerSection !== null) {
+          return {
+            // 元の状態を展開して、特定のouterKeyの値のみを更新。
+            ...prevFields,
+            [outerKey]: {
+              ...outerSection, // 取得したオブジェクトセクションを展開。
+              [innerKey]: value, // innerKeyに該当するプロパティを新しいvalueで更新。
+            },
+          };
+        }
+        return prevFields; // セクションがオブジェクトでない場合は、状態を変更せずにそのまま返す。
+      });
+    } else {
+      // ネストされていないプロパティの場合の処理（特にネストを考慮せずに、プロパティを更新すればいい。）
+      setFields((prevFields) => ({
+        ...prevFields,
+        [name]: value,
+      }));
+    }
+  };
+
+  // 「応募要項」の追加または削除を処理する関数
+  const handleConditionsChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { value, checked } = e.target; // e.targetから value と checked の値を抽出する。
+
+    // 現在の「応募要項」配列をコピーして新しい配列を作成する。これにより、元の配列を直接変更することなく、新しい値を追加または削除できる。
+    const updatedConditions = [...fields.conditions];
+
+    if (checked) {
+      // チェックボックスが選択された場合（checked が true の場合）、新しい「応募要項」を配列に追加する。
+      updatedConditions.push(value);
+    } else {
+      // チェックボックスの選択が解除された場合（checked が false の場合）、該当する「応募要項」を配列から削除する。
+      //indexOf() メソッドは、指定された要素を配列で探し、その要素が見つかればその位置のインデックス（0から始まる）を返します。要素が配列内に存在しない場合は -1 を返します。
+      const index = updatedConditions.indexOf(value);
+
+      if (index !== -1) {
+        // 「応募要項」が配列内に存在する場合のみ、削除操作を行う
+        updatedConditions.splice(index, 1);
+      }
+    }
+
+    // 「応募要項」配列を更新した状態オブジェクトで、fieldsを更新する。
+    setFields((prevFields) => ({
+      ...prevFields, // 現在のフィールドの値
+      conditions: updatedConditions, // 新しい「応募要項」配列で更新
+    }));
+  };
+
+  // 画像の選択を処理する関数。
+  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
+    const { files } = e.target; // e.targetからファイルリストを取得
+
+    if (files) {
+      // 現在のイメージファイルの配列をコピーして新しい配列を作成
+      const updatedImages = [...fields.images];
+
+      // 取得したファイルリストをループ処理し、新しいイメージファイルを配列に追加。
+      for (const file of files) {
+        updatedImages.push(file);
+      }
+
+      // stateを更新して、新しい画像配列をセット
+      setFields((prevFields) => ({
+        ...prevFields,
+        images: updatedImages,
+      }));
+    }
+  };
 
   return (
     // mountedがtrueの場合のみフォームをレンダリング
@@ -56,14 +138,14 @@ const EventAddForm = () => {
         <div className="mb-4 bg-sky-50 p-4">
           <div className="mb-4">
             <label
-              htmlFor="event_type"
+              htmlFor="type"
               className="block text-gray-700 font-bold mb-2"
             >
               タイプ
             </label>
             <select
-              id="event_type"
-              name="event_type"
+              id="type"
+              name="type"
               className="border rounded w-full py-2 px-3"
               required
               value={fields.type}
@@ -159,7 +241,7 @@ const EventAddForm = () => {
             id="venue"
             name="location.venue"
             className="border rounded w-full py-2 px-3 mb-2"
-            placeholder="会場"
+            placeholder="会場など"
             value={fields.location.venue}
             onChange={handleChange}
           />
@@ -246,7 +328,7 @@ const EventAddForm = () => {
                 value="年齢不問"
                 className="mr-2"
                 checked={fields.conditions.includes("年齢不問")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_anyAge">年齢不問</label>
             </div>
@@ -258,7 +340,7 @@ const EventAddForm = () => {
                 value="女性歓迎"
                 className="mr-2"
                 checked={fields.conditions.includes("女性歓迎")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_womenWelcome">女性歓迎</label>
             </div>
@@ -270,7 +352,7 @@ const EventAddForm = () => {
                 value="20代歓迎"
                 className="mr-2"
                 checked={fields.conditions.includes("20代歓迎")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_20sWelcome">20代歓迎</label>
             </div>
@@ -282,7 +364,7 @@ const EventAddForm = () => {
                 value="学生歓迎"
                 className="mr-2"
                 checked={fields.conditions.includes("学生歓迎")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_studentsWelcome">学生歓迎</label>
             </div>
@@ -294,7 +376,7 @@ const EventAddForm = () => {
                 value="シニア歓迎"
                 className="mr-2"
                 checked={fields.conditions.includes("シニア歓迎")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_seniorsWelcome">シニア歓迎</label>
             </div>
@@ -306,7 +388,7 @@ const EventAddForm = () => {
                 value="初心者歓迎"
                 className="mr-2"
                 checked={fields.conditions.includes("初心者歓迎")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_beginnersWelcome">初心者歓迎</label>
             </div>
@@ -318,7 +400,7 @@ const EventAddForm = () => {
                 value="経験者優遇"
                 className="mr-2"
                 checked={fields.conditions.includes("経験者優遇")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_experiencePreferred">経験者優遇</label>
             </div>
@@ -330,7 +412,7 @@ const EventAddForm = () => {
                 value="子供同伴可"
                 className="mr-2"
                 checked={fields.conditions.includes("子供同伴可")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_childrenAllowed">子供同伴可</label>
             </div>
@@ -342,7 +424,7 @@ const EventAddForm = () => {
                 value="英語が話せる方歓迎"
                 className="mr-2"
                 checked={fields.conditions.includes("英語が話せる方歓迎")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_englishWelcome">
                 英語が話せる方歓迎
@@ -356,7 +438,7 @@ const EventAddForm = () => {
                 value="地元住民限定"
                 className="mr-2"
                 checked={fields.conditions.includes("地元住民限定")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_localResidentsOnly">地元住民限定</label>
             </div>
@@ -368,7 +450,7 @@ const EventAddForm = () => {
                 value="ボランティア"
                 className="mr-2"
                 checked={fields.conditions.includes("ボランティア")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_volunteer">ボランティア</label>
             </div>
@@ -380,7 +462,7 @@ const EventAddForm = () => {
                 value="独身の方限定"
                 className="mr-2"
                 checked={fields.conditions.includes("独身の方限定")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_singlePeopleOnly">独身の方限定</label>
             </div>
@@ -392,7 +474,7 @@ const EventAddForm = () => {
                 value="企業団体のみの参加可"
                 className="mr-2"
                 checked={fields.conditions.includes("企業団体のみの参加可")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_onlyCorporateOrganizations">
                 企業団体のみの参加可
@@ -406,7 +488,7 @@ const EventAddForm = () => {
                 value="ペット同伴可"
                 className="mr-2"
                 checked={fields.conditions.includes("ペット同伴可")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_petsAllowed">ペット同伴可</label>
             </div>
@@ -418,7 +500,7 @@ const EventAddForm = () => {
                 value="健康証明書が必要"
                 className="mr-2"
                 checked={fields.conditions.includes("健康証明書が必要")}
-                onChange={handleEventsChange}
+                onChange={handleConditionsChange}
               />
               <label htmlFor="condition_healthCertificateRequired">
                 健康証明書が必要
@@ -521,7 +603,7 @@ const EventAddForm = () => {
 
         <div>
           <button
-            className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline"
+            className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4"
             type="submit"
           >
             Add Event
