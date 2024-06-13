@@ -1,9 +1,11 @@
 "use client";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { EventFormFields } from "@/types/eventFormFields";
+import { ImageUploadResponse } from "@/types/imageUploadResponse";
 
 const EventAddForm = () => {
   const [mounted, setMounted] = useState<boolean>(false); // コンポーネントがマウントされたかどうかを追跡するための状態
+  const [imageUrls, setImageUrls] = useState<string[]>([]); // Cloudinaryで提供された画像URLを保持するためのstate
   // フォームの各フィールドの初期値を設定
   const [fields, setFields] = useState<EventFormFields>({
     type: "",
@@ -35,6 +37,8 @@ const EventAddForm = () => {
     },
     images: [],
   });
+
+  const [submitting, setSubmitting] = useState<boolean>(false); // 送信中の状態を管理
 
   // コンポーネントがマウントされた後に、mounted状態をtrueに設定
   useEffect(() => {
@@ -127,10 +131,53 @@ const EventAddForm = () => {
     }
   };
 
+  const handleSubmit = async (e: FormEvent) => {
+    e.preventDefault();
+    setSubmitting(true);
+
+    // 画像ファイルが存在する場合、まず画像をアップロード
+    if (fields.images.length > 0) {
+      const formData = new FormData();
+      fields.images.forEach((image) => formData.append("image", image));
+
+      const imageResponse = await fetch("/api/events/image", {
+        method: "POST",
+        body: formData,
+      });
+
+      if (imageResponse.ok) {
+        const imageData: ImageUploadResponse = await imageResponse.json();
+        // 成功したら、画像URLを「imageUrls」stateに保存
+        setImageUrls(imageData.map((img) => img.secure_url));
+      } else {
+        alert("画像のアップロードに失敗しました。");
+        setSubmitting(false);
+        return;
+      }
+    }
+
+    // 画像アップロードに成功した後、その他のイベントデータを送信
+    const response = await fetch("/api/events", {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({ ...fields, images: imageUrls }),
+    });
+
+    setSubmitting(false);
+
+    if (response.ok) {
+      alert("イベントが正常に登録されました。");
+    } else {
+      alert("イベントの登録に失敗しました。");
+    }
+  };
+
   return (
     // mountedがtrueの場合のみフォームをレンダリング
     mounted && (
-      <form action="/api/events" method="POST" encType="multipart/form-data">
+      <form onSubmit={handleSubmit} encType="multipart/form-data">
         <h2 className="text-3xl text-center font-semibold mb-6">
           イベント登録
         </h2>

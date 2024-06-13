@@ -9,6 +9,9 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/busboy": "^1.5.4",
+    "busboy": "^1.6.0",
+    "cloudinary": "^2.2.0",
     "date-fns": "^3.6.0",
     "mongodb": "^6.7.0",
     "mongoose": "^8.4.1",

@@ -1,6 +1,10 @@
 import connectDB from "@/config/database";
 import Event from "@/models/Event";
 import { getSessionUser } from "@/utils/getSessionUser"; //セッション情報からユーザー情報を取得する関数をインポート
+import cloudinary from "@/config/cloudinary";
+import Busboy from "busboy";
+import { NextApiRequest, NextApiResponse } from "next";
+import { IncomingMessage } from "http";
 
 // GET /api/events
 export const GET = async (request: Request) => {
@@ -35,15 +39,18 @@ export const POST = async (request: Request) => {
     const { userId } = sessionUser; // ユーザーIDをセッションから取得
 
     const formData = await request.formData(); // リクエストからFormDataを取得
+    const body = await request.json(); // JSONデータも受け取る
 
     // FormDataからconditionsの全ての値を取得
     const conditions = formData.getAll("conditions");
 
+    // JSONボディから画像URLを取得
+    const imageUrls = body.images || [];
+
     // FormDataからimagesの全ての値を取得し、空でないファイル名のものだけをフィルター
-    //（以下の部分があるとエラーになってしまうので、一先ずコメントアウトしておく。画像アップロード処理の時に再度試行する予定。）
     // const images = formData
     //   .getAll("images")
-    //   .filter((image) => image.name !== "");
+    //   .filter((item): item is File => item instanceof File && item.name !== "");
 
     // データベースに保存するためのオブジェクトを構築
     const eventData = {
@@ -75,17 +82,14 @@ export const POST = async (request: Request) => {
         phone: formData.get("responsible_info.phone"),
       },
       owner: userId,
-      // images,
+      images: imageUrls, // 画像URLをイベントデータに含める
     };
-
-    // console.log(eventData);
 
     // 新しいイベントを、データベースに保存
     const newEvent = new Event(eventData);
     await newEvent.save();
 
-    // 成功時のレスポンス
-    // イベントが正常に保存された後、そのイベントの詳細ページにリダイレクト
+    // 成功時のレスポンス、イベントが正常に保存された後、そのイベントの詳細ページにリダイレクト
     return Response.redirect(
       `${process.env.NEXTAUTH_URL}/events/${newEvent._id}`
     );
