@@ -10,6 +10,7 @@ import { FaClock } from "react-icons/fa";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Event } from "@/types/event"; // Event型をインポート
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   const { data: session } = useSession() as { data: CustomSession | null }; // ログインセッションからデータを取得。
@@ -77,15 +78,15 @@ const ProfilePage = () => {
 
         setEvents(updatedEvents); // フィルタリングされたイベントの新しい配列で、stateを更新
 
-        alert("Event Deleted");
+        toast.success("Event Deleted");
       } else {
         // リクエストが成功しなかった場合
-        alert("Failed to delete event");
+        toast.error("Failed to delete event");
       }
     } catch (error) {
       // 何らかのエラーが発生した場合
       console.log(error);
-      alert("Failed to delete event");
+      toast.error("Failed to delete event");
     }
   };
 
