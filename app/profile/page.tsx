@@ -10,6 +10,7 @@ import { FaClock } from "react-icons/fa";
 import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Event } from "@/types/event"; // Event型をインポート
+import { toast } from "react-toastify";
 
 const ProfilePage = () => {
   const { data: session } = useSession() as { data: CustomSession | null }; // ログインセッションからデータを取得。
@@ -54,8 +55,39 @@ const ProfilePage = () => {
     }
   }, [session]);
 
-  const handleDeleteEvent = (eventId: string) => {
-    console.log(`Deleting event: ${eventId}`);
+  //イベントを削除するための関数を定義。引数にイベントIDを受け取る。
+  const handleDeleteEvent = async (eventId: string) => {
+    // ブラウザの確認ダイアログを表示し、ユーザーに削除の確認を求める
+    const confirmed = window.confirm(
+      "本当にこのイベントを削除してもよろしいですか?"
+    );
+
+    if (!confirmed) return; // もしユーザーがキャンセルを選択した場合、関数の実行をここで停止
+
+    try {
+      // 指定されたイベントIdを持つイベントの削除を実行するために、DELETEリクエストを送信
+      const res = await fetch(`/api/events/${eventId}`, {
+        method: "DELETE",
+      });
+
+      // リクエストが成功した場合（ステータスコード200）
+      if (res.status === 200) {
+        // stateから、削除されたイベントを除外
+        // events配列をフィルタリングして、削除されたイベント以外を新しい配列に格納
+        const updatedEvents = events.filter((event) => event._id !== eventId);
+
+        setEvents(updatedEvents); // フィルタリングされたイベントの新しい配列で、stateを更新
+
+        toast.success("Event Deleted");
+      } else {
+        // リクエストが成功しなかった場合
+        toast.error("Failed to delete event");
+      }
+    } catch (error) {
+      // 何らかのエラーが発生した場合
+      console.log(error);
+      toast.error("Failed to delete event");
+    }
   };
 
   return (
