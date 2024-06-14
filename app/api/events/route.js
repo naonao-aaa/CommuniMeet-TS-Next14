@@ -1,13 +1,14 @@
 import connectDB from "@/config/database";
 import Event from "@/models/Event";
 import { getSessionUser } from "@/utils/getSessionUser"; //セッション情報からユーザー情報を取得する関数をインポート
+import cloudinary from "@/config/cloudinary";
 
 // GET /api/events
-export const GET = async (request: Request) => {
+export const GET = async (request) => {
   try {
     await connectDB(); // connectDB関数を呼び出してデータベースに接続を試みる。
 
-    const events = await Event.find({}); //Event モデルを使用して、MongoDB からすべての物件データを取得
+    const events = await Event.find({}); //Eventモデルを使用して、MongoDB からすべてのイベントデータを取得
 
     return new Response(JSON.stringify(events), {
       status: 200,
@@ -21,7 +22,7 @@ export const GET = async (request: Request) => {
 
 // POST /api/events
 // POSTリクエストを処理してイベント情報をデータベースに追加
-export const POST = async (request: Request) => {
+export const POST = async (request) => {
   try {
     await connectDB(); // データベースに接続
 
@@ -40,10 +41,9 @@ export const POST = async (request: Request) => {
     const conditions = formData.getAll("conditions");
 
     // FormDataからimagesの全ての値を取得し、空でないファイル名のものだけをフィルター
-    //（以下の部分があるとエラーになってしまうので、一先ずコメントアウトしておく。画像アップロード処理の時に再度試行する予定。）
-    // const images = formData
-    //   .getAll("images")
-    //   .filter((image) => image.name !== "");
+    const images = formData
+      .getAll("images")
+      .filter((image) => image.name !== "");
 
     // データベースに保存するためのオブジェクトを構築
     const eventData = {
@@ -77,6 +77,34 @@ export const POST = async (request: Request) => {
       owner: userId,
       // images,
     };
+
+    // 画像をCloudinaryにアップロードするためのプロミス配列
+    const imageUploadPromises = [];
+
+    // 画像ファイルごとにループ
+    for (const image of images) {
+      const imageBuffer = await image.arrayBuffer(); // 画像データをバッファとして読み込む
+      const imageArray = Array.from(new Uint8Array(imageBuffer)); // バッファからUint8Arrayを生成し、配列に変換
+      const imageData = Buffer.from(imageArray); // Node.jsのBufferに変換
+
+      // 画像データをBase64形式に変換
+      const imageBase64 = imageData.toString("base64");
+
+      // Cloudinaryに画像をアップロードし、結果をプロミス配列に追加
+      const result = await cloudinary.uploader.upload(
+        `data:image/png;base64,${imageBase64}`,
+        {
+          folder: "ts_communimeeting",
+        }
+      );
+
+      imageUploadPromises.push(result.secure_url);
+
+      // すべての画像のアップロードが完了するのを待つ
+      const uploadedImages = await Promise.all(imageUploadPromises);
+      // アップロードされた画像のURLを、イベントデータに追加
+      eventData.images = uploadedImages;
+    }
 
     // console.log(eventData);
 

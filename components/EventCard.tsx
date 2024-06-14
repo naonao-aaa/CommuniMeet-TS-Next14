@@ -16,7 +16,7 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className="rounded-xl shadow-md relative">
       <Image
-        src={`/images/events/${event.images[0]}`}
+        src={event.images[0]}
         alt="イベントの説明"
         height={0}
         width={0}

@@ -6,6 +6,7 @@ import { fetchEvent } from "@/utils/requests";
 import { Event } from "@/types/event";
 import EventHeaderImage from "@/components/EventHeaderImage";
 import EventDetails from "@/components/EventDetails";
+import EventImages from "@/components/EventImages";
 import Spinner from "@/components/Spinner";
 import { FaArrowLeft } from "react-icons/fa";
 
@@ -154,6 +155,8 @@ const EventPage: React.FC = () => {
                 </div>
               </div>
             </section>
+
+            <EventImages images={event.images} />
           </>
         )}
     </>
