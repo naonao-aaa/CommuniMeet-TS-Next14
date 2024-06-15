@@ -1,11 +1,20 @@
 "use client";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { EventFormFields } from "@/types/eventFormFields";
+import { useParams, useRouter } from "next/navigation";
+import { toast } from "react-toastify";
+import { fetchEvent } from "@/utils/requests";
 
-const EventAddForm = () => {
+// EventFormFields型 から 'images' プロパティを除外した型を作成
+type FormFieldsWithoutImages = Omit<EventFormFields, "images">;
+
+const EventEditForm = () => {
+  const { id } = useParams(); // URLパラメータからイベントIDを取得。
+  const router = useRouter(); // Next.jsのルーターインスタンスを取得。
+
   const [mounted, setMounted] = useState<boolean>(false); // コンポーネントがマウントされたかどうかを追跡するための状態
   // フォームの各フィールドの初期値を設定
-  const [fields, setFields] = useState<EventFormFields>({
+  const [fields, setFields] = useState<FormFieldsWithoutImages>({
     type: "",
     name: "",
     description: "",
@@ -33,13 +42,79 @@ const EventAddForm = () => {
       email: "",
       phone: "",
     },
-    images: [],
+    // images: [],
   });
+
+  const [loading, setLoading] = useState(true); // データロード中のstate。
 
   // コンポーネントがマウントされた後に、mounted状態をtrueに設定
   useEffect(() => {
     setMounted(true);
+
+    // イベントのデータを非同期で取得する関数を定義。
+    const fetchEventData = async () => {
+      // idが無効、またはidが配列の場合、処理を中止。
+      if (!id || Array.isArray(id)) {
+        console.error("Invalid event ID");
+        setLoading(false);
+        return;
+      }
+
+      try {
+        const eventData = await fetchEvent(id); // APIから、イベントデータを取得。
+
+        if (!eventData) {
+          console.error("イベントデータが見つかりませんでした。");
+          setLoading(false);
+          return;
+        }
+
+        // APIから取得したイベントデータを、「fields」stateのFormFieldsWithoutImages型に合うように変換
+        const formattedData: FormFieldsWithoutImages = {
+          type: eventData.type,
+          name: eventData.name,
+          description: eventData.description,
+          location: eventData.location,
+          date_time: {
+            start: formatDate(eventData.date_time.start), // 日時データを適切な形式に変換（フォームに表示させるために）
+            end: formatDate(eventData.date_time.end), // 日時データを適切な形式に変換（フォームに表示させるために）
+          },
+          attendee_limits: {
+            min: eventData.attendee_limits.min.toString(), // 数値を文字列に変換
+            max: eventData.attendee_limits.max.toString(), // 数値を文字列に変換
+          },
+          ticket_info: {
+            price: eventData.ticket_info.price.toString(), // 数値を文字列に変換
+          },
+          conditions: eventData.conditions,
+          responsible_info: eventData.responsible_info,
+        };
+
+        setFields(formattedData); // 「fields」stateを更新して、フォームにデータをセット。
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchEventData(); // 実際に、イベントデータ取得関数を呼び出し。
   }, []);
+
+  // 日時のフォーマットを "YYYY-MM-DDTHH:mm" に変換する関数
+  function formatDate(dateString: string) {
+    const date = new Date(dateString);
+    return `${date.getFullYear()}-${padTo2Digits(
+      date.getMonth() + 1
+    )}-${padTo2Digits(date.getDate())}T${padTo2Digits(
+      date.getHours()
+    )}:${padTo2Digits(date.getMinutes())}`;
+  }
+
+  // 一桁の数値を二桁の文字列に変換するためのヘルパー関数
+  function padTo2Digits(num: number) {
+    return num.toString().padStart(2, "0");
+  }
 
   // フォームの入力値が変更されたときに呼び出される関数
   const handleChange = (
@@ -55,7 +130,8 @@ const EventAddForm = () => {
       // setFieldsを使用して状態を更新。ここでは、prevFields（更新前の状態）を引数に取る。
       setFields((prevFields) => {
         // outerKeyをキーとして使用して、prevFieldsから対応するオブジェクトセクション（例: locationオブジェクト）を取得する。
-        const outerSection = prevFields[outerKey as keyof EventFormFields];
+        const outerSection =
+          prevFields[outerKey as keyof FormFieldsWithoutImages];
         // 取得したセクションがオブジェクトであることを確認。
         if (typeof outerSection === "object" && outerSection !== null) {
           return {
@@ -106,36 +182,44 @@ const EventAddForm = () => {
     }));
   };
 
-  // 画像の選択を処理する関数。
-  const handleImageChange = (e: ChangeEvent<HTMLInputElement>) => {
-    const { files } = e.target; // e.targetからファイルリストを取得
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // フォームのデフォルトの送信動作（ページのリロードなど）を防止。
 
-    if (files) {
-      // 現在のイメージファイルの配列をコピーして新しい配列を作成
-      const updatedImages = [...fields.images];
+    try {
+      const formData = new FormData(e.currentTarget); // フォーム要素から新しいFormDataオブジェクトを作成し、すべての入力値を含むようにする。
 
-      // 取得したファイルリストをループ処理し、新しいイメージファイルを配列に追加。
-      for (const file of files) {
-        updatedImages.push(file);
+      // イベントを更新するためのサーバーのPUTエンドポイントに非同期リクエストを送信
+      const res = await fetch(`/api/events/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (res.status === 200) {
+        // 更新が成功した場合、イベント詳細ページに遷移させる。
+        router.push(`/events/${id}`);
+      } else if (res.status === 401 || res.status === 403) {
+        // サーバーが401（未認証）または403（禁止）で応答した場合、権限がないことを示すトースト通知を表示。
+        toast.error("Permission denied");
+      } else {
+        // 他のエラーステータスの場合、一般的なエラーメッセージを表示。
+        toast.error("Something went wrong");
       }
-
-      // stateを更新して、新しい画像配列をセット
-      setFields((prevFields) => ({
-        ...prevFields,
-        images: updatedImages,
-      }));
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
     }
   };
 
   return (
     // mountedがtrueの場合のみフォームをレンダリング
-    mounted && (
-      <form action="/api/events" method="POST" encType="multipart/form-data">
+    mounted &&
+    !loading && (
+      <form onSubmit={handleSubmit}>
         <h2 className="text-3xl text-center font-semibold mb-6">
-          イベント登録
+          イベント編集
         </h2>
 
-        <div className="mb-4 bg-sky-50 p-4">
+        <div className="mb-4 bg-purple-50 p-4">
           <div className="mb-4">
             <label
               htmlFor="type"
@@ -196,7 +280,7 @@ const EventAddForm = () => {
           </div>
         </div>
 
-        <div className="mb-4 bg-sky-50 p-4">
+        <div className="mb-4 bg-purple-50 p-4">
           <label className="block text-gray-700 font-bold mb-2">場所</label>
           <input
             type="text"
@@ -247,7 +331,7 @@ const EventAddForm = () => {
           />
         </div>
 
-        <div className="mb-4 bg-sky-50 p-4">
+        <div className="mb-4 bg-purple-50 p-4">
           <div className="mb-4">
             <label
               htmlFor="start"
@@ -281,7 +365,7 @@ const EventAddForm = () => {
           </div>
         </div>
 
-        <div className="mb-4 flex flex-wrap bg-sky-50 p-4">
+        <div className="mb-4 flex flex-wrap bg-purple-50 p-4">
           <div className="w-full mb-2">
             <label className="block text-gray-700 font-bold mb-2">
               募集人数
@@ -319,7 +403,7 @@ const EventAddForm = () => {
           </div>
         </div>
 
-        <div className="mb-4 bg-sky-50 p-4">
+        <div className="mb-4 bg-purple-50 p-4">
           <label className="block text-gray-700 font-bold mb-2">応募要項</label>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-2">
             <div>
@@ -511,7 +595,7 @@ const EventAddForm = () => {
           </div>
         </div>
 
-        <div className="mb-4 bg-sky-50 p-4">
+        <div className="mb-4 bg-purple-50 p-4">
           <label className="block text-gray-700 font-bold mb-2">
             料金・予算 (無料の場合は、0を入力してください)
           </label>
@@ -532,7 +616,7 @@ const EventAddForm = () => {
           </div>
         </div>
 
-        <div className="mb-4 bg-sky-50 p-4">
+        <div className="mb-4 bg-purple-50 p-4">
           <div className="mb-4">
             <label
               htmlFor="owner_name"
@@ -587,35 +671,16 @@ const EventAddForm = () => {
           </div>
         </div>
 
-        <div className="mb-4 bg-sky-50 p-4">
-          <label
-            htmlFor="images"
-            className="block text-gray-700 font-bold mb-2"
-          >
-            イメージ画像 (最大4つまでの画像をアップできます)
-          </label>
-          <input
-            type="file"
-            id="images"
-            name="images"
-            className="border rounded w-full py-2 px-3"
-            accept="image/*"
-            multiple
-            onChange={handleImageChange}
-            required
-          />
-        </div>
-
         <div>
           <button
-            className="bg-sky-500 hover:bg-sky-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4"
+            className="bg-purple-500 hover:bg-purple-600 text-white font-bold py-2 px-4 rounded-full w-full focus:outline-none focus:shadow-outline mt-4"
             type="submit"
           >
-            Add Event
+            Update Event
           </button>
         </div>
       </form>
     )
   );
 };
-export default EventAddForm;
+export default EventEditForm;
