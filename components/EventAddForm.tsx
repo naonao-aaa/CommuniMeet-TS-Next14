@@ -513,7 +513,7 @@ const EventAddForm = () => {
 
         <div className="mb-4 bg-sky-50 p-4">
           <label className="block text-gray-700 font-bold mb-2">
-            料金・予算 (該当しない場合は空白のままにしてください)
+            料金・予算 (無料の場合は、0を入力してください)
           </label>
           <div className="flex flex-col space-y-4 sm:flex-row sm:space-y-0 sm:space-x-4">
             <div className="flex items-center">
@@ -524,6 +524,7 @@ const EventAddForm = () => {
                 name="ticket_info.price"
                 className="border rounded w-full py-2 px-3"
                 min="0"
+                required
                 value={fields.ticket_info.price}
                 onChange={handleChange}
               />
