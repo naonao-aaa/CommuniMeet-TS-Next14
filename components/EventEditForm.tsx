@@ -1,5 +1,5 @@
 "use client";
-import { useState, useEffect, ChangeEvent } from "react";
+import { useState, useEffect, ChangeEvent, FormEvent } from "react";
 import { EventFormFields } from "@/types/eventFormFields";
 import { useParams, useRouter } from "next/navigation";
 import { toast } from "react-toastify";
@@ -182,7 +182,33 @@ const EventEditForm = () => {
     }));
   };
 
-  const handleSubmit = async () => {};
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // フォームのデフォルトの送信動作（ページのリロードなど）を防止。
+
+    try {
+      const formData = new FormData(e.currentTarget); // フォーム要素から新しいFormDataオブジェクトを作成し、すべての入力値を含むようにする。
+
+      // イベントを更新するためのサーバーのPUTエンドポイントに非同期リクエストを送信
+      const res = await fetch(`/api/events/${id}`, {
+        method: "PUT",
+        body: formData,
+      });
+
+      if (res.status === 200) {
+        // 更新が成功した場合、イベント詳細ページに遷移させる。
+        router.push(`/events/${id}`);
+      } else if (res.status === 401 || res.status === 403) {
+        // サーバーが401（未認証）または403（禁止）で応答した場合、権限がないことを示すトースト通知を表示。
+        toast.error("Permission denied");
+      } else {
+        // 他のエラーステータスの場合、一般的なエラーメッセージを表示。
+        toast.error("Something went wrong");
+      }
+    } catch (error) {
+      console.log(error);
+      toast.error("Something went wrong");
+    }
+  };
 
   return (
     // mountedがtrueの場合のみフォームをレンダリング
