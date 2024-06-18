@@ -3,6 +3,12 @@ import { Schema, model, models } from "mongoose";
 // MessageSchema の定義
 const MessageSchema = new Schema(
   {
+    // 会話(メッセージコンテナ)のID
+    conversationId: {
+      type: Schema.Types.ObjectId,
+      ref: "Conversation",
+      required: true,
+    },
     // 送信者のID
     senderId: {
       type: Schema.Types.ObjectId,
