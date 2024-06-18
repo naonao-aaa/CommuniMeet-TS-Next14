@@ -26,7 +26,7 @@ const ConversationSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Message",
       required: false, // 最初のメッセージ時には、最後に交換されたメッセージのIDがないから。
-      default: null,
+      default: null, //デフォルト値をnullとする。これを用意しないと、conversationの新規作成時に、DBのドキュメントにlastMessageIdフィールドが保存されない。
     },
   },
   // 作成日時と更新日時のタイムスタンプを自動的に追加
