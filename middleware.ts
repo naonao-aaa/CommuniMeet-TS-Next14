@@ -30,5 +30,5 @@ export async function middleware(req: NextRequest) {
 
 // ミドルウェアの適用範囲を指定。特定のルートにのみミドルウェアを適用
 export const config = {
-  matcher: ["/events/add", "/profile", "/events/saved", "/messages"],
+  matcher: ["/events/add", "/profile", "/events/saved", "/messages/:path*"],
 };
