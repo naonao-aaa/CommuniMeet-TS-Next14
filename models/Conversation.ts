@@ -1,7 +1,7 @@
 import { Schema, model, models } from "mongoose";
 
-// ConversationsSchema の定義
-const ConversationsSchema = new Schema(
+// ConversationSchema の定義
+const ConversationSchema = new Schema(
   {
     // 関連するイベントのID
     eventId: {
@@ -34,9 +34,9 @@ const ConversationsSchema = new Schema(
   }
 );
 
-// Conversationsモデルを定義または既存のモデルを再利用。（目的は、同じモデルを複数回作成してエラーを引き起こすことを避けること。）
-const Conversations =
-  models.Conversations || model("Conversations", ConversationsSchema);
+// Conversationモデルを定義または既存のモデルを再利用。（目的は、同じモデルを複数回作成してエラーを引き起こすことを避けること。）
+const Conversation =
+  models.Conversation || model("Conversation", ConversationSchema);
 
-// Conversationsモデルをエクスポート
-export default Conversations;
+// Conversationモデルをエクスポート
+export default Conversation;
