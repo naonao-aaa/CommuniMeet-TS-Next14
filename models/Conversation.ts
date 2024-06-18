@@ -26,6 +26,7 @@ const ConversationSchema = new Schema(
       type: Schema.Types.ObjectId,
       ref: "Message",
       required: false, // 最初のメッセージ時には、最後に交換されたメッセージのIDがないから。
+      default: null,
     },
   },
   // 作成日時と更新日時のタイムスタンプを自動的に追加
