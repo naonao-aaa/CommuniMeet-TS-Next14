@@ -15,7 +15,8 @@ export async function middleware(req: NextRequest) {
     pathname.startsWith("/events/add") ||
     pathname.startsWith("/profile") ||
     pathname.startsWith("/events/saved") ||
-    pathname.startsWith("/messages")
+    pathname.startsWith("/messages") ||
+    pathname.startsWith("/conversations")
   ) {
     // JWTトークンが存在しない場合（ユーザーが未認証の場合）
     if (!token) {
@@ -30,5 +31,11 @@ export async function middleware(req: NextRequest) {
 
 // ミドルウェアの適用範囲を指定。特定のルートにのみミドルウェアを適用
 export const config = {
-  matcher: ["/events/add", "/profile", "/events/saved", "/messages/:path*"],
+  matcher: [
+    "/events/add",
+    "/profile",
+    "/events/saved",
+    "/messages/:path*",
+    "/conversations/:path*",
+  ],
 };
