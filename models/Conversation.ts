@@ -24,7 +24,11 @@ const ConversationSchema = new Schema(
     // 会話内で最後に交換されたメッセージのID。
     lastMessageId: {
       type: Schema.Types.ObjectId,
-      ref: "Message",
+      // ref: "Message",  //コメントアウト。
+      // Messageモデルを遅延ロード。循環参照（MessageモデルでConversationモデルを参照していて、ConversationモデルでMessageモデルを参照している）でエラーが出るので、その対策。
+      // ref: () => require("./Message").default は、Conversationスキーマの lastMessageIdフィールドの型定義に使われるが、これは Conversationモデル自体が定義される時には直接実行されない。
+      // この関数（遅延参照）は、実際に Conversationモデルを使ってデータベース操作を行い、その中で lastMessageId を参照する処理が行われる際に呼び出される。
+      ref: () => require("./Message").default,
       required: false, // 最初のメッセージ時には、最後に交換されたメッセージのIDがないから。
       default: null, //デフォルト値をnullとする。これを用意しないと、conversationの新規作成時に、DBのドキュメントにlastMessageIdフィールドが保存されない。
     },

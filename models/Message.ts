@@ -6,7 +6,11 @@ const MessageSchema = new Schema(
     // 会話(メッセージコンテナ)のID
     conversationId: {
       type: Schema.Types.ObjectId,
-      ref: "Conversation",
+      // ref: "Conversation",  //コメントアウト。
+      // Conversationモデルを遅延ロード。循環参照（MessageモデルでConversationモデルを参照していて、ConversationモデルでMessageモデルを参照している）でエラーが出るので、その対策。
+      // ref: () => require("./Conversation").default は、Message スキーマの conversationId フィールドの型定義に使われるが、これは Message モデル自体が定義される時には直接実行されない。
+      // この関数（遅延参照）は、実際に Message モデルを使ってデータベース操作を行い、その中で conversationId を参照する処理が行われる際に呼び出される。
+      ref: () => require("./Conversation").default,
       required: true,
     },
     // 送信者のID
