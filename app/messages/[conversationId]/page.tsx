@@ -3,6 +3,8 @@ import { useEffect, useState, FormEvent } from "react";
 import { useParams } from "next/navigation";
 import { useRouter } from "next/router";
 import Spinner from "@/components/Spinner"; // ローディングスピナーのコンポーネントをインポート
+import { useSession } from "next-auth/react"; // NextAuth.jsの機能をインポート
+import { CustomSession } from "@/types/customSession"; // カスタムセッション型をインポート
 
 // イベント情報の型定義
 interface Event {
@@ -23,6 +25,7 @@ interface Message {
   recipientId: string;
   body: string;
   createdAt: Date;
+  read: boolean; // メッセージが既読かどうかを表すプロパティ
 }
 
 const ConversationPage = () => {
@@ -32,27 +35,49 @@ const ConversationPage = () => {
   const [event, setEvent] = useState<Event>(); //この会話(メッセージコンテナ)のイベント情報を管理するためのstate。
   const [loading, setLoading] = useState(true); // ローディング状態を追跡するためのstate
 
+  const { data: session } = useSession() as { data: CustomSession | null }; // ログインセッションからデータを取得。
+  const currentUserId = session?.user?.id; // 現在のログインユーザーのIDを取得。
+
   useEffect(() => {
     // この会話(メッセージコンテナ)のメッセージ一覧を取得する関数を定義。
     const fetchMessages = async () => {
       const res = await fetch(`/api/messages/${conversationId}`);
       if (!res.ok) throw new Error("Failed to fetch messages.");
-      return res.json();
+      const data = await res.json();
+      setMessages(data.messages);
+
+      // 未読メッセージのIDを抽出
+      const unreadMessageIds = data.messages
+        .filter(
+          (msg: Message) =>
+            !msg.read && String(msg.recipientId) === String(currentUserId)
+        ) // 「msg.readがfalse（つまり未読）」かつ「ログインユーザーが受信者になっている」メッセージのみを抽出。
+        .map((msg: Message) => msg._id); // フィルタリングしたメッセージの「_id」のみを抽出して、新しい配列を作成。
+
+      // 未読メッセージがあれば、既読に更新するAPIを呼び出す
+      if (unreadMessageIds.length > 0) {
+        await Promise.all(
+          unreadMessageIds.map((messageId: string) =>
+            fetch(`/api/messages/read/${messageId}`, {
+              method: "PUT",
+            })
+          )
+        );
+      }
+      return data;
     };
 
     // 今回の会話(メッセージのコンテナ)IDから、イベント情報を取得するための関数を定義。
     const fetchEvent = async () => {
       const res = await fetch(`/api/conversations/${conversationId}`);
       if (!res.ok) throw new Error("Failed to fetch event.");
-      return res.json();
+      const data = await res.json();
+      setEvent(data.eventId);
+      return data;
     };
 
-    // 同時に両方のデータを取得
+    // 同時に実行し、両方のデータを取得
     Promise.all([fetchMessages(), fetchEvent()])
-      .then(([messagesData, eventData]) => {
-        setMessages(messagesData.messages); // 「messages」stateにセット。
-        setEvent(eventData.eventId); // 「event」stateにセット。
-      })
       .catch((error) => {
         console.error("Failed to load data:", error);
       })
