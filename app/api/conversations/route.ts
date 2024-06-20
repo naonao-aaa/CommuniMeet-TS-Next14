@@ -38,6 +38,33 @@ export const GET = async (request: Request) => {
         },
       });
 
+    // 取得した各会話(メッセージのコンテナ)の、未読メッセージの数を調べて、未読メッセージの数を各会話オブジェクトに追加する。
+    for (const conversation of conversations) {
+      const unreadCount = await Message.countDocuments({
+        conversationId: conversation._id,
+        read: false,
+        recipientId: sessionUser.user.id,
+      });
+      conversation.unreadCount = unreadCount; // 未読メッセージの数を、会話オブジェクトに追加する
+    }
+
+    // 未読メッセージの有無と最新のメッセージの作成日時によって並び替え
+    // （1：未読メッセージが含まれている会話を先頭に(未読メッセージの数は関係ない), 2：未読メッセージが含まれる会話が複数ある場合は、最近のメッセージがあるものを先頭に）
+    conversations.sort((a, b) => {
+      if (b.unreadCount - a.unreadCount !== 0)
+        return b.unreadCount - a.unreadCount;
+
+      // 会話において、メッセージが何も送信されていないときは、lastMessageIdはnullになるので、その場合を考慮する。
+      if (!a.lastMessageId || !b.lastMessageId) {
+        return 0;
+      }
+
+      // 最新メッセージの作成日時に基づいてソートする
+      const dateA = new Date(a.lastMessageId.createdAt);
+      const dateB = new Date(b.lastMessageId.createdAt);
+      return dateB.getTime() - dateA.getTime();
+    });
+
     // 成功した場合、会話(メッセージコンテナ)情報のリストを、JSON形式でクライアントに返送
     return new Response(JSON.stringify(conversations), {
       status: 200,
