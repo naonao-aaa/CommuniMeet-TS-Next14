@@ -19,7 +19,9 @@ export const GET = async (request: Request, { params }: { params: Params }) => {
     // 指定されたconversationIdに基づいてメッセージを取得
     const messages = await Message.find({
       conversationId: params.conversationId, //URLパラメーターの「conversationId」を条件にする。
-    }).populate("senderId", "username");
+    })
+      .populate("senderId", "username")
+      .sort({ createdAt: 1 }); // createdAtフィールドで昇順にソート
 
     // 検索したメッセージをJSON形式でクライアントに返送
     return new Response(JSON.stringify({ messages }), {
