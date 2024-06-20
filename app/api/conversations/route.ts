@@ -36,7 +36,10 @@ export const GET = async (request: Request) => {
           path: "senderId",
           select: "username", // メッセージの送信者のユーザー名を取得
         },
-      });
+      })
+      .lean(); // .lean()を追加して、結果をプレーンなJavaScriptオブジェクトとして取得。
+    //.lean() を使用すると、Mongooseはデータベースから取得したデータをMongooseドキュメントではなく、プレーンなJavaScriptオブジェクトとして返す。これにより、後続の処理でオブジェクトに新しいプロパティを追加することが容易になる。
+    //こうしないと、後に追加したプロパティ(今回で言うunreadCountプロパティ)を、フロント側に返すことができない。
 
     // 取得した各会話(メッセージのコンテナ)の、未読メッセージの数を調べて、未読メッセージの数を各会話オブジェクトに追加する。
     for (const conversation of conversations) {

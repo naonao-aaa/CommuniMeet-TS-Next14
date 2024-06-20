@@ -9,6 +9,7 @@ interface Conversation {
   eventId: { name: string };
   ownerId: { username: string };
   userId: { username: string };
+  unreadCount: number; // 未読メッセージの数
   lastMessageId?: {
     body: string;
     createdAt: Date;
@@ -31,6 +32,7 @@ const ConversationsPage = () => {
         const res = await fetch("/api/conversations"); // APIから、会話(メッセージのコンテナ)のリストを取得
         if (!res.ok) throw new Error("Failed to fetch conversations"); // レスポンスが正常でない場合にエラーを投げる
         const data = await res.json(); // レスポンスのJSONを解析
+        // console.log(data);
         setConversations(data); //「conversations」stateに、会話(メッセージのコンテナ)のリストをセット。
       } catch (error) {
         // エラーが発生した場合
@@ -57,16 +59,23 @@ const ConversationsPage = () => {
       {/* ローディングが終了したら、内容を表示 */}
       {!loading && (
         <div className="p-4 bg-sky-100 min-h-screen">
-          <h1 className="text-2xl font-bold mb-4">お問合せ一覧</h1>
+          <h1 className="text-4xl font-bold my-4 text-center">お問合せ一覧</h1>
           {conversations.length > 0 ? (
             // 会話(メッセージのコンテナ)がある場合の表示
             <ul className="space-y-4">
               {conversations.map((conv) => (
                 <li
                   key={conv._id}
-                  className="bg-white shadow-md rounded-lg p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
+                  className="bg-white shadow-md rounded-lg relative p-4 hover:shadow-lg transition-shadow duration-200 cursor-pointer"
                   onClick={() => transitionToIndividualConversation(conv._id)}
                 >
+                  {/* 未読メッセージがある場合は'New'ラベルを表示 */}
+                  {conv.unreadCount > 0 && (
+                    <div className="absolute top-4 right-4 bg-pink-600 text-white px-2 py-1 rounded-md">
+                      New
+                    </div>
+                  )}
+
                   <p className="text-lg font-semibold">
                     イベント名: {conv.eventId.name}
                   </p>
@@ -80,7 +89,7 @@ const ConversationsPage = () => {
                     <div className="mt-2 text-gray-800">
                       <p>Last Message: {conv.lastMessageId.body}</p>
                       <p>
-                        from {conv.lastMessageId.senderId.username} <br />(
+                        From: {conv.lastMessageId.senderId.username} <br />(
                         {new Date(
                           conv.lastMessageId.createdAt
                         ).toLocaleString()}
