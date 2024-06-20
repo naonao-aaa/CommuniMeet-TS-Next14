@@ -7,6 +7,7 @@ import logo from "@/assets/images/kouen_park.jpeg";
 import profileDefault from "@/assets/images/profile.png";
 import { FaGoogle } from "react-icons/fa";
 import { signIn, signOut, useSession, getProviders } from "next-auth/react"; // NextAuth.jsの機能をインポート
+import UnreadMessageCount from "./UnreadMessageCount"; //ログインユーザーの未読メッセージ数を表示するコンポーネント
 
 // 認証プロバイダーの型を定義
 interface Provider {
@@ -158,9 +159,9 @@ const Navbar: React.FC = () => {
                     />
                   </svg>
                 </button>
-                <span className="absolute top-0 right-0 inline-flex items-center justify-center px-2 py-1 text-xs font-bold leading-none text-white transform translate-x-1/2 -translate-y-1/2 bg-red-600 rounded-full">
-                  2{/* <!-- 後ほど、実際の通知数に置き換える --> */}
-                </span>
+
+                {/* ログインユーザーの未読メッセージ数を表示するためのコンポーネント */}
+                <UnreadMessageCount session={session} />
               </Link>
               {/* <!-- Profileドロップダウンボタン --> */}
               <div className="relative ml-3">
