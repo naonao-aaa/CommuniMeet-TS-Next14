@@ -5,6 +5,7 @@ import { useRouter } from "next/router";
 import Spinner from "@/components/Spinner"; // ローディングスピナーのコンポーネントをインポート
 import { useSession } from "next-auth/react"; // NextAuth.jsの機能をインポート
 import { CustomSession } from "@/types/customSession"; // カスタムセッション型をインポート
+import { useUnreadMessages } from "@/context/UnreadMessagesContext"; // グローバルコンテキストからのフックをインポート
 
 // イベント情報の型定義
 interface Event {
@@ -37,6 +38,8 @@ const ConversationPage = () => {
 
   const { data: session } = useSession() as { data: CustomSession | null }; // ログインセッションからデータを取得。
   const currentUserId = session?.user?.id; // 現在のログインユーザーのIDを取得。
+
+  const { setUnreadCount } = useUnreadMessages(); // コンテキストから、グローバルstateのunreadCount(未読メッセージ数)を更新する関数を取得
 
   useEffect(() => {
     // この会話(メッセージコンテナ)のメッセージ一覧を取得する関数を定義。
@@ -76,8 +79,26 @@ const ConversationPage = () => {
       return data;
     };
 
+    if (!session) return; // セッションがなければ何もせずにreturnする。
+
+    // 全会話合計での未読メッセージ数を取得する非同期関数を定義。
+    const fetchUnreadMessages = async () => {
+      try {
+        const res = await fetch("/api/messages/unread-count");
+        if (res.ok) {
+          const data = await res.json();
+          setUnreadCount(data.unreadCount); // グローバルstateの「unreadCount」に、全会話合計での未読メッセージ数をセット。
+        }
+      } catch (error) {
+        console.error("Failed to fetch unread messages:", error);
+      }
+    };
+
     // 同時に実行し、両方のデータを取得
     Promise.all([fetchMessages(), fetchEvent()])
+      .then(() => {
+        fetchUnreadMessages(); // fetchUnreadMessages関数を実行。
+      })
       .catch((error) => {
         console.error("Failed to load data:", error);
       })
@@ -85,7 +106,7 @@ const ConversationPage = () => {
         // 最後に必ず実行。
         setLoading(false); // 全てのデータロードが完了した後にローディング状態を解除
       });
-  }, [conversationId]);
+  }, [conversationId, setUnreadCount]);
 
   // 新規メッセージを送信する関数を定義。
   const sendMessage = async () => {
