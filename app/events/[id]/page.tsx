@@ -12,6 +12,7 @@ import { FaArrowLeft } from "react-icons/fa";
 import BookmarkButton from "@/components/BookmarkButton";
 import ShareButtons from "@/components/ShareButtons";
 import EventContactForm from "@/components/EventContactForm";
+import ButtonForTransitionToMessage from "@/components/ButtonForTransitionToMessage";
 
 const EventPage: React.FC = () => {
   // URLからイベントIDを取得
@@ -74,8 +75,9 @@ const EventPage: React.FC = () => {
                   <EventDetails event={event} />
                   <aside className="space-y-4">
                     <BookmarkButton event={event} />
+                    <ButtonForTransitionToMessage event={event} />
                     <ShareButtons event={event} />
-                    <EventContactForm event={event} />
+                    {/* <EventContactForm event={event} /> */}
                   </aside>
                 </div>
               </div>

@@ -5,6 +5,7 @@ import Navbar from "@/components/Navbar";
 import Footer from "@/components/Footer";
 import AuthProvider from "@/components/AuthProvider";
 import { ToastContainer } from "react-toastify";
+import { UnreadMessagesProvider } from "@/context/UnreadMessagesContext";
 import "react-toastify/dist/ReactToastify.css";
 
 export const metadata = {
@@ -20,16 +21,18 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <AuthProvider>
-      <html lang="ja">
-        <body>
-          <Navbar />
-          <main>{children}</main>
-          <Footer />
-          <ToastContainer />
-        </body>
-      </html>
-    </AuthProvider>
+    <UnreadMessagesProvider>
+      <AuthProvider>
+        <html lang="ja">
+          <body>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <ToastContainer />
+          </body>
+        </html>
+      </AuthProvider>
+    </UnreadMessagesProvider>
   );
 };
 
