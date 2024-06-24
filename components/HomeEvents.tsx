@@ -4,10 +4,10 @@ import { fetchEvents } from "@/utils/requests";
 import { Event } from "@/types/event"; // Event 型定義のインポート
 
 const HomeEvents: React.FC = async () => {
-  const events = await fetchEvents(); // eventデータを取得
+  const data = await fetchEvents(); // eventデータを取得
 
   // イベントをランダムに3つ選択(訪問するたびに異なるイベントが表示されるように。)
-  const recentEvents: Event[] = events
+  const recentEvents = data.events
     .sort(() => Math.random() - Math.random())
     .slice(0, 3);
 

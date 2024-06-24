@@ -8,9 +8,24 @@ export const GET = async (request) => {
   try {
     await connectDB(); // connectDB関数を呼び出してデータベースに接続を試みる。
 
-    const events = await Event.find({}); //Eventモデルを使用して、MongoDB からすべてのイベントデータを取得
+    // const events = await Event.find({}); //Eventモデルを使用して、MongoDB からすべてのイベントデータを取得
 
-    return new Response(JSON.stringify(events), {
+    // リクエストからページ番号を取得。デフォルトは1ページ目としている。
+    const page = request.nextUrl.searchParams.get("page") || 1;
+    // リクエストからページサイズを取得。デフォルトは6項目としている。
+    const pageSize = request.nextUrl.searchParams.get("pageSize") || 9;
+
+    const skip = (page - 1) * pageSize; // ページに応じて、スキップするドキュメントの数を計算。
+
+    const total = await Event.countDocuments({}); // DBのEventドキュメントの総数を取得。
+    const events = await Event.find({}).skip(skip).limit(pageSize); // ページネーションを適用して、DBからイベントを取得。
+
+    const result = {
+      total, // Eventドキュメントの総数
+      events, // 現在のページのイベントデータ一覧
+    };
+
+    return new Response(JSON.stringify(result), {
       status: 200,
     });
   } catch (error) {

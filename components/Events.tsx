@@ -8,19 +8,27 @@ import { Event } from "@/types/event"; // Event型をインポート
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]); // イベントのリストを管理するためのstateを定義。
   const [loading, setLoading] = useState(true); // データの読み込み状態を管理するためのstateを定義。
+  const [page, setPage] = useState(1); // 現在のページ番号をstateで管理。
+  const [pageSize, setPageSize] = useState(9); // 1ページあたりのアイテム数をstateで管理。
+  const [totalItems, setTotalItems] = useState(0); // 総イベント数をstateで管理。
 
   useEffect(() => {
     // イベントデータをフェッチする非同期関数を定義。
     const fetchEvents = async () => {
       try {
-        const res = await fetch("/api/events"); // イベントデータ一覧を取得。
+        // const res = await fetch("/api/events"); // イベントデータ一覧を取得。
+        const res = await fetch(
+          `/api/events?page=${page}&pageSize=${pageSize}` // APIからのデータ取得時に、ページ番号とページサイズをパラメータとして渡している。
+        );
 
         if (!res.ok) {
           throw new Error("Failed to fetch data");
         }
 
         const data = await res.json(); // レスポンスからJSONデータを抽出
-        setEvents(data); // 取得したデータをstateにセット
+        // setEvents(data); // 取得したデータをstateにセット
+        setEvents(data.events); // イベント一覧をstateにセット。
+        setTotalItems(data.total); // 総イベント数をstateにセット。
       } catch (error) {
         console.log(error);
       } finally {
