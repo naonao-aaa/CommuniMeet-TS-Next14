@@ -2,12 +2,18 @@ import { Event } from "@/types/event"; // Event 型定義のインポート
 
 const apiDomain = process.env.NEXT_PUBLIC_API_DOMAIN || null; // 環境変数からAPIのドメインを取得し、設定されていない場合はnullを返す。
 
+// ページネーションを適用するためのレスポンス型を定義。
+interface EventsResponseForPagination {
+  total: number;
+  events: Event[];
+}
+
 // Event一覧データを非同期に取得する関数を定義。
-async function fetchEvents(): Promise<Event[]> {
+async function fetchEvents(): Promise<EventsResponseForPagination> {
   try {
     // APIドメインが未設定の場合は、空の配列を返してreturnして処理を終わる。
     if (!apiDomain) {
-      return [];
+      return { total: 0, events: [] };
     }
 
     // APIからEvent一覧データを取得するためのfetchリクエストを実行。
@@ -21,7 +27,7 @@ async function fetchEvents(): Promise<Event[]> {
     return res.json(); // レスポンスのJSONを解析して返す。
   } catch (error) {
     console.log(error);
-    return []; // エラーがあった場合は空の配列を返す
+    return { total: 0, events: [] }; // エラーがあった場合は空の配列を返す
   }
 }
 
