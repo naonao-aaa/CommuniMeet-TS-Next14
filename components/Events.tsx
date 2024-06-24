@@ -3,13 +3,14 @@ import { useState, useEffect } from "react";
 import EventCard from "@/components/EventCard";
 import Spinner from "@/components/Spinner";
 import { Event } from "@/types/event"; // Event型をインポート
+import Pagination from "@/components/Pagination"; // Paginationコンポーネント
 
 // イベント一覧を表示するための、クライアントサイドのEventsコンポーネントを定義。
 const Events = () => {
   const [events, setEvents] = useState<Event[]>([]); // イベントのリストを管理するためのstateを定義。
   const [loading, setLoading] = useState(true); // データの読み込み状態を管理するためのstateを定義。
   const [page, setPage] = useState(1); // 現在のページ番号をstateで管理。
-  const [pageSize, setPageSize] = useState(9); // 1ページあたりのアイテム数をstateで管理。
+  const [pageSize, setPageSize] = useState(24); // 1ページあたりのアイテム数をstateで管理。
   const [totalItems, setTotalItems] = useState(0); // 総イベント数をstateで管理。
 
   useEffect(() => {
@@ -37,7 +38,12 @@ const Events = () => {
     };
 
     fetchEvents(); // 実際に、定義したfetchEvents関数を実行する。
-  }, []);
+  }, [page, pageSize]);
+
+  // ページ変更時に呼び出される関数
+  const handlePageChange = (newPage: number) => {
+    setPage(newPage); // 新しいページ番号で、「page」stateを更新
+  };
 
   return loading ? ( // ローディング中はSpinnerコンポーネントを表示。
     <Spinner loading={loading} />
@@ -55,6 +61,14 @@ const Events = () => {
           </div>
         )}
       </div>
+
+      {/* Paginationコンポーネントを表示 */}
+      <Pagination
+        page={page}
+        pageSize={pageSize}
+        totalItems={totalItems}
+        onPageChange={handlePageChange}
+      />
     </section>
   );
 };

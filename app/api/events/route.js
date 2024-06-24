@@ -12,8 +12,8 @@ export const GET = async (request) => {
 
     // リクエストからページ番号を取得。デフォルトは1ページ目としている。
     const page = request.nextUrl.searchParams.get("page") || 1;
-    // リクエストからページサイズを取得。デフォルトは6項目としている。
-    const pageSize = request.nextUrl.searchParams.get("pageSize") || 9;
+    // リクエストからページサイズを取得。デフォルトは24項目としている。
+    const pageSize = request.nextUrl.searchParams.get("pageSize") || 24;
 
     const skip = (page - 1) * pageSize; // ページに応じて、スキップするドキュメントの数を計算。
 
