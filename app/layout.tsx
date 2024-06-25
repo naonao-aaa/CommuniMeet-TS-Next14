@@ -7,6 +7,7 @@ import AuthProvider from "@/components/AuthProvider";
 import { ToastContainer } from "react-toastify";
 import { UnreadMessagesProvider } from "@/context/UnreadMessagesContext";
 import "react-toastify/dist/ReactToastify.css";
+import "photoswipe/dist/photoswipe.css"; // PhotoSwipeライブラリのスタイリングをアプリケーションに適用。
 
 export const metadata = {
   title: "CommuniMeeting",
