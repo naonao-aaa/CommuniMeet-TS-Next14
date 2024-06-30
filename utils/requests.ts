@@ -54,5 +54,30 @@ async function fetchEvent(id: string): Promise<Event | null> {
   }
 }
 
+// 注目Event一覧データを非同期に取得する関数を定義。
+async function fetchFeaturedEvents(): Promise<Event[]> {
+  try {
+    // APIドメインが未設定の場合は、空の配列を返してreturnして処理を終わる。
+    if (!apiDomain) {
+      return [];
+    }
+
+    // APIから、注目Event一覧データを取得するためのfetchリクエストを実行。
+    const res = await fetch(`${apiDomain}/events/featured`, {
+      cache: "no-store",
+    });
+
+    // レスポンスが正常でない場合はエラーを投げる。
+    if (!res.ok) {
+      throw new Error("Failed to fetch data");
+    }
+
+    return res.json(); // レスポンスのJSONを解析して返す。
+  } catch (error) {
+    console.log(error);
+    return []; // エラーがあった場合は空の配列を返す
+  }
+}
+
 // エクスポート
-export { fetchEvents, fetchEvent };
+export { fetchEvents, fetchEvent, fetchFeaturedEvents };
