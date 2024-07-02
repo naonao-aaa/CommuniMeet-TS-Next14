@@ -42,8 +42,10 @@ const SavedEventsPage = () => {
   ) : (
     // ローディングが終了したら、内容を表示
     <section className="px-4 py-6">
-      <h1 className="text-2xl mb-4">ブックマークされたイベント</h1>
       <div className="container-xl lg:container m-auto px-4 py-6">
+        <h1 className="text-2xl mb-4 font-semibold text-pink-500">
+          ブックマークされたイベント
+        </h1>
         {events.length === 0 ? (
           <p>ブックマークされたイベントはございません。</p>
         ) : (

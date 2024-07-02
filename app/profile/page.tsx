@@ -115,7 +115,9 @@ const ProfilePage = () => {
             </div>
 
             <div className="md:w-3/4 md:pl-4">
-              <h2 className="text-xl font-semibold mb-4">登録したイベント</h2>
+              <h2 className="text-xl font-semibold mb-4  text-pink-500">
+                登録したイベント
+              </h2>
               {!loading && events.length === 0 && (
                 <p>登録したイベントはございません。</p>
               )}

@@ -218,7 +218,7 @@ const Navbar: React.FC = () => {
                         setIsProfileMenuOpen(false);
                       }}
                     >
-                      Saved events
+                      Bookmarked events
                     </Link>
                     <button
                       onClick={() => {
