@@ -1,11 +1,19 @@
+import Link from "next/link";
 import React from "react";
-
-// export const metadata = {
-//   title: "Test",
-// };
+import Hero from "@/components/Hero";
+import InfoBoxes from "@/components/InfoBoxes";
+import HomeEvents from "@/components/HomeEvents";
+import FeaturedEvents from "@/components/FeaturedEvents";
 
 const HomePage: React.FC = () => {
-  return <div>HomePage</div>;
+  return (
+    <>
+      <Hero />
+      <InfoBoxes />
+      <FeaturedEvents /> {/* 注目イベント */}
+      <HomeEvents />
+    </>
+  );
 };
 
 export default HomePage;

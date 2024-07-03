@@ -1,6 +1,13 @@
 import React from "react";
 
 import "@/assets/styles/globals.css";
+import Navbar from "@/components/Navbar";
+import Footer from "@/components/Footer";
+import AuthProvider from "@/components/AuthProvider";
+import { ToastContainer } from "react-toastify";
+import { UnreadMessagesProvider } from "@/context/UnreadMessagesContext";
+import "react-toastify/dist/ReactToastify.css";
+import "photoswipe/dist/photoswipe.css"; // PhotoSwipeライブラリのスタイリングをアプリケーションに適用。
 
 export const metadata = {
   title: "CommuniMeeting",
@@ -15,11 +22,18 @@ interface MainLayoutProps {
 
 const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   return (
-    <html lang="ja">
-      <body>
-        <div>{children}</div>
-      </body>
-    </html>
+    <UnreadMessagesProvider>
+      <AuthProvider>
+        <html lang="ja">
+          <body>
+            <Navbar />
+            <main>{children}</main>
+            <Footer />
+            <ToastContainer />
+          </body>
+        </html>
+      </AuthProvider>
+    </UnreadMessagesProvider>
   );
 };
 
