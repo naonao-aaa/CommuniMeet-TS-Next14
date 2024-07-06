@@ -8,7 +8,7 @@ import profileDefault from "@/assets/images/profile.png"; // デフォルトの�
 import Spinner from "@/components/Spinner";
 import { FaClock } from "react-icons/fa";
 import { format } from "date-fns";
-import { ja } from "date-fns/locale";
+// import { ja } from "date-fns/locale";
 import { Event } from "@/types/event"; // Event型をインポート
 import { toast } from "react-toastify";
 
@@ -141,18 +141,12 @@ const ProfilePage = () => {
                       <FaClock className="inline mr-2" />
                       {format(
                         new Date(event.date_time.start),
-                        "yyyy年M月d日H:mm",
-                        {
-                          locale: ja,
-                        }
+                        "yyyy/MM/dd HH:mm"
                       )}
-                      〜
+                      {" 〜 "}
                       {format(
                         new Date(event.date_time.end),
-                        "yyyy年M月d日H:mm",
-                        {
-                          locale: ja,
-                        }
+                        "yyyy/MM/dd HH:mm"
                       )}
                     </div>
                     <div className="mt-2">

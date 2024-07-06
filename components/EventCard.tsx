@@ -3,7 +3,7 @@ import Link from "next/link";
 import { FaClock, FaMapMarker } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
 import { format } from "date-fns";
-import { ja } from "date-fns/locale";
+// import { ja } from "date-fns/locale";
 
 import { Event } from "../types/event";
 
@@ -36,15 +36,11 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <p className="text-gray-500 mb-4 text-center">
             <FaClock className="inline mr-2" />
             <br />
-            {format(new Date(event.date_time.start), "yyyy年M月d日H:mm", {
-              locale: ja,
-            })}
+            {format(new Date(event.date_time.start), "yyyy/MM/dd HH:mm")}
             <br />
             〜
             <br />
-            {format(new Date(event.date_time.end), "yyyy年M月d日H:mm", {
-              locale: ja,
-            })}
+            {format(new Date(event.date_time.end), "yyyy/MM/dd HH:mm")}
           </p>
         </div>
 

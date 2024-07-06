@@ -1,7 +1,7 @@
 import { FaClock, FaMoneyBill, FaCheck, FaMapMarker } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
 import { format } from "date-fns";
-import { ja } from "date-fns/locale";
+// import { ja } from "date-fns/locale";
 import { Event } from "@/types/event"; // Event 型定義のインポート
 
 // EventDetailsProps 型定義
@@ -30,13 +30,9 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
           </h4>
           <p className="flex items-center justify-center">
             <FaClock className="mr-2" />
-            {format(new Date(event.date_time.start), "yyyy年M月d日 H:mm", {
-              locale: ja,
-            })}
+            {format(new Date(event.date_time.start), "yyyy/MM/dd HH:mm")}
             {" 〜 "}
-            {format(new Date(event.date_time.end), "yyyy年M月d日 H:mm", {
-              locale: ja,
-            })}
+            {format(new Date(event.date_time.end), "yyyy/MM/dd HH:mm")}
           </p>
         </div>
 
