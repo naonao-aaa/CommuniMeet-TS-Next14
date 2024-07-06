@@ -5,7 +5,7 @@ import InfoBoxes from "@/components/InfoBoxes";
 import HomeEvents from "@/components/HomeEvents";
 import FeaturedEvents from "@/components/FeaturedEvents";
 
-const HomePage: React.FC = () => {
+const HomePage: React.FC = async () => {
   return (
     <>
       <Hero />

@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaClock, FaMapMarker } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
-import { format, subHours } from "date-fns";
+import { format } from "date-fns";
 import { ja } from "date-fns/locale";
 
 import { Event } from "../types/event";
@@ -12,13 +12,7 @@ interface EventCardProps {
   event: Event;
 }
 
-const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  // const timeZone = "Asia/Tokyo"; // タイムゾーンを設定
-
-  // UTCからJSTへのオフセットとして9時間を引く
-  const adjustedStartDate = subHours(new Date(event.date_time.start), 9);
-  const adjustedEndDate = subHours(new Date(event.date_time.end), 9);
-
+const EventCardForHomePage: React.FC<EventCardProps> = ({ event }) => {
   return (
     <div className="rounded-xl shadow-md relative">
       <Image
@@ -42,11 +36,15 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <p className="text-gray-500 mb-4 text-center">
             <FaClock className="inline mr-2" />
             <br />
-            {format(adjustedStartDate, "yyyy年M月d日H:mm", { locale: ja })}
+            {format(new Date(event.date_time.start), "yyyy年M月d日H:mm", {
+              locale: ja,
+            })}
             <br />
             〜
             <br />
-            {format(adjustedEndDate, "yyyy年M月d日H:mm", { locale: ja })}
+            {format(new Date(event.date_time.end), "yyyy年M月d日H:mm", {
+              locale: ja,
+            })}
           </p>
         </div>
 
@@ -78,4 +76,4 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
     </div>
   );
 };
-export default EventCard;
+export default EventCardForHomePage;

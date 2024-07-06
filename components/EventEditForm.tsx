@@ -104,6 +104,8 @@ const EventEditForm = () => {
   // 日時のフォーマットを "YYYY-MM-DDTHH:mm" に変換する関数
   function formatDate(dateString: string) {
     const date = new Date(dateString);
+    date.setHours(date.getHours() - 9); // UTCからJSTへのオフセットとして9時間を引く
+
     return `${date.getFullYear()}-${padTo2Digits(
       date.getMonth() + 1
     )}-${padTo2Digits(date.getDate())}T${padTo2Digits(
