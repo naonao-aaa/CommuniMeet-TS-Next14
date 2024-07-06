@@ -9,6 +9,8 @@ import { UnreadMessagesProvider } from "@/context/UnreadMessagesContext";
 import "react-toastify/dist/ReactToastify.css";
 import "photoswipe/dist/photoswipe.css"; // PhotoSwipeライブラリのスタイリングをアプリケーションに適用。
 
+export const dynamic = "force-dynamic";
+
 export const metadata = {
   title: "CommuniMeeting",
   description: "楽しいイベントを見つけて参加しましょう！",
