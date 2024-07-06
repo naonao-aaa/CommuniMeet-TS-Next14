@@ -102,20 +102,8 @@ const EventEditForm = () => {
   }, []);
 
   // 日時のフォーマットを "YYYY-MM-DDTHH:mm" に変換する関数
-  // function formatDate(dateString: string) {
-  //   const date = new Date(dateString);
-
-  //   return `${date.getFullYear()}-${padTo2Digits(
-  //     date.getMonth() + 1
-  //   )}-${padTo2Digits(date.getDate())}T${padTo2Digits(
-  //     date.getHours()
-  //   )}:${padTo2Digits(date.getMinutes())}`;
-  // }
   function formatDate(dateString: string) {
     const date = new Date(dateString);
-    // UTC時間をJSTに変換するために9時間を加算します（UTC+9）
-    date.setHours(date.getUTCHours() + 9);
-
     return `${date.getFullYear()}-${padTo2Digits(
       date.getMonth() + 1
     )}-${padTo2Digits(date.getDate())}T${padTo2Digits(

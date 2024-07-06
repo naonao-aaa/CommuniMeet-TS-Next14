@@ -3,7 +3,7 @@ import Image from "next/image";
 import { FaClock, FaMapMarker } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
 import { format } from "date-fns";
-// import { ja } from "date-fns/locale";
+import { ja } from "date-fns/locale";
 import { Event } from "../types/event";
 
 // Propsの型を定義。
@@ -33,11 +33,15 @@ const FeaturedEventCard: React.FC<FeaturedEventCardProps> = ({ event }) => {
           <p className="text-gray-500 mb-1 text-center">
             <FaClock className="inline mr-2" />
             <br />
-            {format(new Date(event.date_time.start), "yyyy/MM/dd HH:mm")}
+            {format(new Date(event.date_time.start), "yyyy年M月d日H:mm", {
+              locale: ja,
+            })}
             <br />
             〜
             <br />
-            {format(new Date(event.date_time.end), "yyyy/MM/dd HH:mm")}
+            {format(new Date(event.date_time.end), "yyyy年M月d日H:mm", {
+              locale: ja,
+            })}
           </p>
         </div>
 
