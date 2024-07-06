@@ -1,4 +1,5 @@
-import { NextApiRequest, NextApiResponse } from "next";
+// import { NextApiRequest, NextApiResponse } from "next"; //Next.js 14から、従来の NextApiRequest および NextApiResponse を使用する代わりに、新しい NextRequest および NextResponse タイプが導入されている。
+import { NextRequest, NextResponse } from "next/server";
 import connectDB from "@/config/database"; // データベース接続設定をインポート
 import Event from "@/models/Event"; // MongooseのEventモデルをインポート
 
@@ -8,8 +9,9 @@ interface RequestParams {
 }
 
 // GET /api/events/user/:userId
+// ユーザーIDに基づいてイベントデータを取得するAPI
 export const GET = async (
-  request: NextApiRequest,
+  request: NextRequest,
   { params }: { params: RequestParams }
 ) => {
   try {
