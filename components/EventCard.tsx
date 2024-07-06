@@ -2,7 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { FaClock, FaMapMarker } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
-import { toZonedTime, format as tzFormat } from "date-fns-tz";
+import { format } from "date-fns";
 // import { ja } from "date-fns/locale";
 
 import { Event } from "../types/event";
@@ -13,15 +13,6 @@ interface EventCardProps {
 }
 
 const EventCard: React.FC<EventCardProps> = ({ event }) => {
-  const timeZone = "Asia/Tokyo"; // JSTタイムゾーンを指定
-
-  // 日時をJSTタイムゾーンに変換してフォーマットする関数
-  const formatTime = (dateString: string) => {
-    const utcDate = new Date(dateString); // UTCとして日付を解析
-    const zonedDate = toZonedTime(utcDate, timeZone); // 日付をJSTタイムゾーンに変換
-    return tzFormat(zonedDate, "yyyy/MM/dd HH:mm", { timeZone }); // 日付をフォーマット
-  };
-
   return (
     <div className="rounded-xl shadow-md relative">
       <Image
@@ -45,11 +36,11 @@ const EventCard: React.FC<EventCardProps> = ({ event }) => {
           <p className="text-gray-500 mb-4 text-center">
             <FaClock className="inline mr-2" />
             <br />
-            {formatTime(event.date_time.start)} {/* 開始時刻をJSTで表示 */}
+            {format(new Date(event.date_time.start), "yyyy/MM/dd HH:mm")}
             <br />
             〜
             <br />
-            {formatTime(event.date_time.end)} {/* 終了時刻をJSTで表示 */}
+            {format(new Date(event.date_time.end), "yyyy/MM/dd HH:mm")}
           </p>
         </div>
 
