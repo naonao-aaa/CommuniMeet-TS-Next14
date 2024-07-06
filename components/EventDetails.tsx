@@ -1,6 +1,6 @@
 import { FaClock, FaMoneyBill, FaCheck, FaMapMarker } from "react-icons/fa";
 import { FaPerson } from "react-icons/fa6";
-import { format } from "date-fns";
+import { format, subHours } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Event } from "@/types/event"; // Event 型定義のインポート
 
@@ -10,6 +10,10 @@ interface EventDetailsProps {
 }
 
 const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
+  // UTCからJSTへのオフセットとして9時間を引く
+  const adjustedStartDate = subHours(new Date(event.date_time.start), 9);
+  const adjustedEndDate = subHours(new Date(event.date_time.end), 9);
+
   return (
     <main>
       <div className="bg-white p-6 rounded-lg shadow-md text-center md:text-left">
@@ -30,13 +34,9 @@ const EventDetails: React.FC<EventDetailsProps> = ({ event }) => {
           </h4>
           <p className="flex items-center justify-center">
             <FaClock className="mr-2" />
-            {format(new Date(event.date_time.start), "yyyy年M月d日 H:mm", {
-              locale: ja,
-            })}
+            {format(adjustedStartDate, "yyyy年M月d日H:mm", { locale: ja })}
             {" 〜 "}
-            {format(new Date(event.date_time.end), "yyyy年M月d日 H:mm", {
-              locale: ja,
-            })}
+            {format(adjustedEndDate, "yyyy年M月d日H:mm", { locale: ja })}
           </p>
         </div>
 

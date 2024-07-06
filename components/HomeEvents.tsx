@@ -1,5 +1,5 @@
 import Link from "next/link";
-import EventCard from "@/components/EventCard";
+import EventCardForHomePage from "./EventCardForHomePage";
 import { fetchEvents } from "@/utils/requests";
 import { Event } from "@/types/event"; // Event 型定義のインポート
 
@@ -24,7 +24,7 @@ const HomeEvents: React.FC = async () => {
               <p>No Events Found</p>
             ) : (
               recentEvents.map((event) => (
-                <EventCard key={event._id} event={event} />
+                <EventCardForHomePage key={event._id} event={event} />
               ))
             )}
           </div>

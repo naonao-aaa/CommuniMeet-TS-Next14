@@ -7,7 +7,7 @@ import { CustomSession } from "@/types/customSession"; // カスタムセッシ�
 import profileDefault from "@/assets/images/profile.png"; // デフォルトのプロファイル画像のパスをインポート
 import Spinner from "@/components/Spinner";
 import { FaClock } from "react-icons/fa";
-import { format } from "date-fns";
+import { format, subHours } from "date-fns";
 import { ja } from "date-fns/locale";
 import { Event } from "@/types/event"; // Event型をインポート
 import { toast } from "react-toastify";
@@ -140,7 +140,7 @@ const ProfilePage = () => {
                       <p className="text-lg font-semibold">{event.name}</p>
                       <FaClock className="inline mr-2" />
                       {format(
-                        new Date(event.date_time.start),
+                        subHours(new Date(event.date_time.start), 9),
                         "yyyy年M月d日H:mm",
                         {
                           locale: ja,
@@ -148,7 +148,7 @@ const ProfilePage = () => {
                       )}
                       〜
                       {format(
-                        new Date(event.date_time.end),
+                        subHours(new Date(event.date_time.end), 9),
                         "yyyy年M月d日H:mm",
                         {
                           locale: ja,
