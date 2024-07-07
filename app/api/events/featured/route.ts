@@ -1,6 +1,8 @@
 import connectDB from "@/config/database";
 import Event from "@/models/Event"; // Eventモデルをインポート
 
+export const dynamic = "force-dynamic"; // キャッシュを利用せずに、リクエスト毎に最新のデータを取得するための記述。
+
 // GET /api/events/featured
 // 注目のイベント（is_featuredがtrueのイベント）をデータベースから取得するAPI
 export const GET = async (request: Request) => {
